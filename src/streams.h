@@ -32,9 +32,9 @@ public:
 
 	uint32_t GetRemainingDataSize() const { return m_capacity - m_head; }
 
-	void Read(void* outData, uint32_t byteCount);
-	void Read(uint32_t& outData) { Read(&outData, sizeof(outData)); }
-	void Read(int32_t& outData) { Read(&outData, sizeof(outData)); }
+	bool Read(void* outData, uint32_t byteCount);
+	bool Read(uint32_t& outData) { return Read(&outData, sizeof(outData)); }
+	bool Read(int32_t& outData) { return Read(&outData, sizeof(outData)); }
 
 private:
 	char* m_buffer;

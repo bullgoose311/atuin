@@ -57,9 +57,15 @@ InputMemoryStream::~InputMemoryStream()
 	std::free(m_buffer);
 }
 
-void InputMemoryStream::Read(void* outData, uint32_t byteCount)
+bool InputMemoryStream::Read(void* outData, uint32_t byteCount)
 {
-	uint32_t bytesToCopy = std::min(GetRemainingDataSize(), byteCount);
-	std::memcpy(outData, m_buffer + m_head, bytesToCopy);
-	m_head += bytesToCopy;
+	if (GetRemainingDataSize() < byteCount)
+	{
+		Log_Error(LOG_LABEL_MEMORY, "attempted to read %d of %d bytes", byteCount, GetRemainingDataSize());
+		return false;
+	}
+
+	std::memcpy(outData, m_buffer + m_head, byteCount);
+	m_head += byteCount;
+	return true;
 }
