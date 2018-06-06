@@ -12,3 +12,5 @@ git remote add origin https://github.com/bullgoose311/atuin.git REM add a remote
 git pull origin master
 
 git push origin master
+
+REM so the steps are: init, add remote, pull, add, commit, push
