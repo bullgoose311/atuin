@@ -23,6 +23,12 @@
     <ClCompile Include="tcp_socket.cpp">
       <Filter>sockets</Filter>
     </ClCompile>
+    <ClCompile Include="streams.cpp">
+      <Filter>streams</Filter>
+    </ClCompile>
+    <ClCompile Include="game_objects.cpp">
+      <Filter>game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="sockets">
@@ -33,6 +39,12 @@
     </Filter>
     <Filter Include="common">
       <UniqueIdentifier>{9924537b-912c-4a55-bd96-d3a895b0f10a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="streams">
+      <UniqueIdentifier>{49fe107a-8b66-4ab6-94fc-6650b72c453c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="game">
+      <UniqueIdentifier>{c803f526-2b83-4631-9230-f4a3d57c259f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -59,6 +71,12 @@
     </ClInclude>
     <ClInclude Include="tcp_socket.h">
       <Filter>sockets</Filter>
+    </ClInclude>
+    <ClInclude Include="streams.h">
+      <Filter>streams</Filter>
+    </ClInclude>
+    <ClInclude Include="game_objects.h">
+      <Filter>game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

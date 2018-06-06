@@ -28,7 +28,9 @@ static const char* s_logLevels[] = {
 
 static const char* s_logLabels[] = {
 	"DEFAULT",
-	"SOCKETS"
+	"DEBUG",
+	"SOCKETS",
+	"MEMORY"
 };
 
 static void _log(LogLabel_e label, LogLevel_e level, const char* fmt, va_list args)

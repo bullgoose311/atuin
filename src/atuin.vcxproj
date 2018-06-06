@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{20FAAE89-8CB8-43B8-9A32-85BA293130C0}</ProjectGuid>
     <RootNamespace>atuin</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -125,11 +125,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="game_objects.cpp" />
     <ClCompile Include="log.cpp" />
     <ClCompile Include="sockets.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="socket_address.cpp" />
     <ClCompile Include="socket_util.cpp" />
+    <ClCompile Include="streams.cpp" />
     <ClCompile Include="sys_utils.cpp" />
     <ClCompile Include="tcp_socket.cpp" />
     <ClCompile Include="udp_socket.cpp" />
@@ -137,9 +139,11 @@
   <ItemGroup>
     <ClInclude Include="array_utils.h" />
     <ClInclude Include="log.h" />
+    <ClInclude Include="game_objects.h" />
     <ClInclude Include="sockets.h" />
     <ClInclude Include="socket_address.h" />
     <ClInclude Include="socket_util.h" />
+    <ClInclude Include="streams.h" />
     <ClInclude Include="sys_utils.h" />
     <ClInclude Include="tcp_socket.h" />
     <ClInclude Include="udp_socket.h" />
