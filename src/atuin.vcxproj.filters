@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="sys_utils.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="socket_address.cpp">
+      <Filter>sockets</Filter>
+    </ClCompile>
+    <ClCompile Include="udp_socket.cpp">
+      <Filter>sockets</Filter>
+    </ClCompile>
+    <ClCompile Include="socket_util.cpp">
+      <Filter>sockets</Filter>
+    </ClCompile>
+    <ClCompile Include="log.cpp">
+      <Filter>logging</Filter>
+    </ClCompile>
+    <ClCompile Include="sockets.cpp">
+      <Filter>sockets</Filter>
+    </ClCompile>
+    <ClCompile Include="tcp_socket.cpp">
+      <Filter>sockets</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="sockets">
+      <UniqueIdentifier>{ea0b85c7-09b1-4ee7-80c5-5d233345bb49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="logging">
+      <UniqueIdentifier>{2cf6b4d8-8854-48be-aa4a-fcfdbb4c702d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common">
+      <UniqueIdentifier>{9924537b-912c-4a55-bd96-d3a895b0f10a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="sockets.h">
+      <Filter>sockets</Filter>
+    </ClInclude>
+    <ClInclude Include="log.h">
+      <Filter>logging</Filter>
+    </ClInclude>
+    <ClInclude Include="array_utils.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="sys_utils.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="udp_socket.h">
+      <Filter>sockets</Filter>
+    </ClInclude>
+    <ClInclude Include="socket_address.h">
+      <Filter>sockets</Filter>
+    </ClInclude>
+    <ClInclude Include="socket_util.h">
+      <Filter>sockets</Filter>
+    </ClInclude>
+    <ClInclude Include="tcp_socket.h">
+      <Filter>sockets</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
