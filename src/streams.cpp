@@ -19,7 +19,7 @@ OutputMemoryStream::OutputMemoryStream() :
 
 OutputMemoryStream::~OutputMemoryStream() 
 { 
-	Log_Info(LOG_LABEL_MEMORY, "output stream free'd");
+	Log_Info(LOG_LABEL_MEMORY, "output stream freed");
 	std::free(m_buffer); 
 }
 
@@ -53,7 +53,7 @@ InputMemoryStream
 
 InputMemoryStream::~InputMemoryStream()
 {
-	Log_Info(LOG_LABEL_MEMORY, "input stream free'd");
+	Log_Info(LOG_LABEL_MEMORY, "input stream freed");
 	std::free(m_buffer);
 }
 
