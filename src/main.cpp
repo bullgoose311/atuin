@@ -13,7 +13,7 @@ void SerializationTest()
 	RoboCat roboCatSrc;
 	roboCatSrc.TestChange();
 
-	Log_Info(LOG_LABEL_DEBUG, "SRC: %d - %d - %s", roboCatSrc.m_health, roboCatSrc.m_meowCount, roboCatSrc.m_name);
+	Log_Info(LOG_LABEL_DEBUG, "SRC: %d - %d - %s - %d", roboCatSrc.m_health, roboCatSrc.m_meowCount, roboCatSrc.m_name, roboCatSrc.m_miceIndices.size());
 
 	OutputMemoryStream outputStream;
 
@@ -27,7 +27,7 @@ void SerializationTest()
 	RoboCat roboCatDst;
 	roboCatDst.Deserialize(inputStream);
 
-	Log_Info(LOG_LABEL_DEBUG, "DST: %d - %d - %s", roboCatDst.m_health, roboCatDst.m_meowCount, roboCatDst.m_name);
+	Log_Info(LOG_LABEL_DEBUG, "DST: %d - %d - %s - %d", roboCatDst.m_health, roboCatDst.m_meowCount, roboCatDst.m_name, roboCatDst.m_miceIndices.size());
 }
 
 int main(int argc, char** argv)

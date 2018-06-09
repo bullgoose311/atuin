@@ -1,9 +1,12 @@
 #include "streams.h"
 
+#include "game_objects.h"
 #include "log.h"
 
 #include <algorithm>
 #include <memory>
+
+extern LinkingContext g_linkingContext;
 
 /******************
 OutputMemoryStream
@@ -36,6 +39,12 @@ void OutputMemoryStream::Write(const void* data, size_t byteCount)
 	m_head = resultHead;
 }
 
+void OutputMemoryStream::Write(GameObject* gameObject)
+{
+	ObjectNetworkId networkId = g_linkingContext.GetNetworkId(gameObject);
+	Write(networkId);
+}
+
 void OutputMemoryStream::ReallocBuffer(uint32_t newLength)
 {
 	Log_Info(LOG_LABEL_MEMORY, "reallocating buffer from size %d to size %d", m_capacity, newLength);
@@ -57,17 +66,23 @@ InputMemoryStream::~InputMemoryStream()
 	std::free(m_buffer);
 }
 
-bool InputMemoryStream::Read(void* outData, uint32_t byteCount)
+void InputMemoryStream::Read(void* outData, uint32_t byteCount)
 {
 	if (GetRemainingDataSize() < byteCount)
 	{
 		Log_Error(LOG_LABEL_MEMORY, "attempted to read %d of %d bytes", byteCount, GetRemainingDataSize());
-		return false;
+		return;
 	}
 
 	std::memcpy(outData, m_buffer + m_head, byteCount);
 	m_head += byteCount;
-	return true;
+}
+
+void InputMemoryStream::Read(GameObject* outGameObject)
+{
+	ObjectNetworkId networkId;
+	Read(networkId);
+	outGameObject = g_linkingContext.GetGameObject(networkId);
 }
 
 /********************

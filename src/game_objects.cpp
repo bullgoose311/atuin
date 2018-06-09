@@ -3,6 +3,38 @@
 #include "array_utils.h"
 #include "log.h"
 
+// TODO: What's the best way to handle stuff like this?
+LinkingContext g_linkingContext;
+
+ObjectNetworkId LinkingContext::GetNetworkId(GameObject* gameObject)
+{
+	if (!gameObject)
+	{
+		return INVALID_OBJECT_NETWORK_ID;
+	}
+
+	auto it = m_objectToIdMap.find(gameObject);
+	if (it == m_objectToIdMap.end())
+	{
+		return INVALID_OBJECT_NETWORK_ID;
+	}
+
+	return it->second;
+}
+
+GameObject* LinkingContext::GetGameObject(ObjectNetworkId networkId)
+{
+	auto it = m_idToObjectMap.find(networkId);
+	if (it != m_idToObjectMap.end())
+	{
+		return it->second;
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
 void RoboCat::Tick()
 {
 
@@ -10,26 +42,20 @@ void RoboCat::Tick()
 
 void RoboCat::Serialize(OutputMemoryStream& stream) const
 {
-	stream.Write<uint32_t>(m_health);
+	stream.Write(m_health);
 	stream.Write(m_meowCount);
-	//no solution for m_homeBase yet
+	stream.Write(m_homeBase);
 	stream.Write(m_name, ARRAY_COUNT(m_name));
-	//no solution for m_mouseIndices yet
+	stream.Write(m_miceIndices);
 }
 
 void RoboCat::Deserialize(InputMemoryStream& stream)
 {
-	bool ok = stream.Read(m_health);
-	ok = ok && stream.Read(m_meowCount);
-	//no solution for homeBase yet
-	ok = ok && stream.Read(m_name, ARRAY_COUNT(m_name));
-	ok = ok && stream.Read(m_meowCount); // this should fail...
-	//no solution for m_miceIndices yet
-
-	if (!ok)
-	{
-		Log_Error(LOG_LABEL_DEFAULT, "failed to deserialize robocat");
-	}
+	stream.Read(m_health);
+	stream.Read(m_meowCount);
+	stream.Read(m_homeBase);
+	stream.Read(m_name, ARRAY_COUNT(m_name));
+	stream.Read(m_miceIndices);
 }
 
 void Game_SendRoboCat(int socket, const RoboCat* roboCat)

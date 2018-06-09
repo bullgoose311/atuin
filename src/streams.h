@@ -4,9 +4,13 @@
 
 #include "sys_utils.h"
 
+#include <vector>
+
 // TODO: How do we know what the stream endianness is?
 #define STREAM_ENDIANNESS 1
 #define PLATFORM_ENDIANNESS 1
+
+class GameObject;
 
 class OutputMemoryStream
 {
@@ -18,10 +22,10 @@ public:
 	uint32_t GetLength() const { return m_head; }
 
 	void Write(const void* data, size_t byteCount);
-	//void Write(uint32_t data) { Write(&data, sizeof(data)); }
-	//void Write(int32_t data) { Write(&data, sizeof(data)); }
+	void Write(GameObject* gameObject);
 	
 	template <typename T> void Write(T data);
+	template <typename T> void Write(const std::vector<T>& vector);
 
 private:
 	char* m_buffer;
@@ -46,6 +50,16 @@ template<typename T> void OutputMemoryStream::Write(T data)
 	}
 }
 
+template<typename T> void OutputMemoryStream::Write(const std::vector<T>& vector)
+{
+	size_t size = vector.size();
+	Write(size);
+	for (const T& element : vector)
+	{
+		Write(element);
+	}
+}
+
 class InputMemoryStream
 {
 public:
@@ -55,15 +69,35 @@ public:
 
 	uint32_t GetRemainingDataSize() const { return m_capacity - m_head; }
 
-	bool Read(void* outData, uint32_t byteCount);
-	bool Read(uint32_t& outData) { return Read(&outData, sizeof(outData)); }
-	bool Read(int32_t& outData) { return Read(&outData, sizeof(outData)); }
+	void Read(void* outData, uint32_t byteCount);
+	void Read(GameObject* outGameObject);
+
+	template <typename T> void Read(T& data);
+	template <typename T> void Read(std::vector<T>& vector);
 
 private:
 	char* m_buffer;
 	uint32_t m_head;
 	uint32_t m_capacity;
 };
+
+template <typename T> void InputMemoryStream::Read(T& data)
+{
+	static_assert(std::is_arithmetic<T>::value || std::is_enum<T>::value, "generic read only works on primitive data types");
+
+	Read(&data, sizeof(data));
+}
+
+template <typename T> void InputMemoryStream::Read(std::vector<T>& vector)
+{
+	size_t size;
+	Read(size);
+	vector.resize(size);
+	for (T& element : vector)
+	{
+		Read(element);
+	}
+}
 
 class OutputMemoryBitStream
 {
