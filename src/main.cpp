@@ -10,17 +10,14 @@ const uint32_t kMaxPacketSize = 1470;
 
 void SerializationTest()
 {
+	GameObject home;
 	RoboCat roboCatSrc;
-	roboCatSrc.TestChange();
-
-	Log_Info(
-		LOG_LABEL_DEBUG, 
-		"SRC: %d - %d - %s - %d", 
-		roboCatSrc.m_health, roboCatSrc.m_meowCount, roboCatSrc.m_name, roboCatSrc.m_miceIndices.size());
+	roboCatSrc.TestChange(&home);
+	roboCatSrc.Print();
 
 	OutputMemoryStream outputStream;
 
-	roboCatSrc.Serialize(outputStream);
+	roboCatSrc.Serialize(&outputStream);
 
 	char* tempBuffer = static_cast<char*>(std::malloc(kMaxPacketSize));
 	std::memcpy(tempBuffer, outputStream.GetBufferPtr(), outputStream.GetLength());
@@ -28,9 +25,8 @@ void SerializationTest()
 	InputMemoryStream inputStream(tempBuffer, outputStream.GetLength());
 
 	RoboCat roboCatDst;
-	roboCatDst.Deserialize(inputStream);
-
-	Log_Info(LOG_LABEL_DEBUG, "DST: %d - %d - %s - %d", roboCatDst.m_health, roboCatDst.m_meowCount, roboCatDst.m_name, roboCatDst.m_miceIndices.size());
+	roboCatDst.Serialize(&inputStream);
+	roboCatDst.Print();
 }
 
 int main(int argc, char** argv)

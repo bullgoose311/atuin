@@ -13,7 +13,76 @@
 class GameObject;
 struct Vector3;
 
-class OutputMemoryStream
+enum StreamDirection_e
+{
+	STREAM_DIR_INPUT,
+	STREAM_DIR_OUTPUT
+};
+
+// MemoryStream
+
+class MemoryStream
+{
+public:
+	virtual void Serialize(void* ioData, uint32_t byteCount) = 0;
+	virtual void Serialize(GameObject* gameObject) = 0;
+	virtual void Serialize(Vector3& v3) = 0;
+	virtual void Serialize(char* str);
+
+	template<typename T> void Serialize(T& data);
+	template<typename T> void Serialize(std::vector<T>& vector);
+
+private:
+	virtual StreamDirection_e GetDirection() = 0;
+};
+
+template<typename T> void MemoryStream::Serialize(T& ioData)
+{
+	static_assert(std::is_arithmetic<T>::value || std::is_enum<T>::value, "generic serialize only supports primitive data types");
+
+	if (STREAM_ENDIANNESS == PLATFORM_ENDIANNESS)
+	{
+		Serialize(&ioData, sizeof(ioData));
+	}
+	else
+	{
+		if (GetDirection() == STREAM_DIR_INPUT)
+		{
+			T data;
+			Serialize(&data, sizeof(T));
+			ioData = ByteSwap(data);
+		}
+		else
+		{
+			T swappedData = ByteSwap(ioData);
+			Serialize(&swappedData, sizeof(swappedData));
+		}
+	}
+}
+
+template<typename T> void MemoryStream::Serialize(std::vector<T>& vector)
+{
+	if (GetDirection() == STREAM_DIR_INPUT)
+	{
+		uint32_t size;
+		Serialize(size);
+		vector.resize(size);
+	}
+	else
+	{
+		uint32_t size = static_cast<uint32_t>(vector.size());
+		Serialize(size);
+	}
+
+	for (T& t : vector)
+	{
+		Serialize(t);
+	}
+}
+
+// OutputMemoryStream
+
+class OutputMemoryStream : public MemoryStream
 {
 public:
 	OutputMemoryStream();
@@ -29,12 +98,20 @@ public:
 	template <typename T> void Write(const T& data);
 	template <typename T> void Write(const std::vector<T>& vector);
 
+	// MemoryStream
+	virtual void Serialize(void* ioData, uint32_t byteCount) override;
+	virtual void Serialize(GameObject* gameObject) override;
+	virtual void Serialize(Vector3& v3) override;
+
 private:
 	char* m_buffer;
 	uint32_t m_head;
 	uint32_t m_capacity;
 
 	void ReallocBuffer(uint32_t newLength);
+
+	// MemoryStream
+	virtual StreamDirection_e GetDirection() { return STREAM_DIR_OUTPUT; }
 };
 
 template<typename T> void OutputMemoryStream::Write(const T& data)
@@ -62,7 +139,9 @@ template<typename T> void OutputMemoryStream::Write(const std::vector<T>& vector
 	}
 }
 
-class InputMemoryStream
+// InputMemoryStream
+
+class InputMemoryStream : public MemoryStream
 {
 public:
 	InputMemoryStream(char* buffer, uint32_t size) : m_buffer(buffer), m_capacity(size), m_head(0) {}
@@ -75,13 +154,21 @@ public:
 	void Read(GameObject* outGameObject);
 	void Read(Vector3& outV3);
 
-	template <typename T> void Read(T& data);
-	template <typename T> void Read(std::vector<T>& vector);
+	template<typename T> void Read(T& data);
+	template<typename T> void Read(std::vector<T>& vector);
+
+	// MemoryStream
+	virtual void Serialize(void* ioData, uint32_t byteCount) override;
+	virtual void Serialize(GameObject* gameObject) override;
+	virtual void Serialize(Vector3& v3) override;
 
 private:
 	char* m_buffer;
 	uint32_t m_head;
 	uint32_t m_capacity;
+
+	// MemoryStream
+	virtual StreamDirection_e GetDirection() { return STREAM_DIR_INPUT; }
 };
 
 template <typename T> void InputMemoryStream::Read(T& data)
@@ -101,6 +188,8 @@ template <typename T> void InputMemoryStream::Read(std::vector<T>& vector)
 		Read(element);
 	}
 }
+
+// OutputMemoryBitStream
 
 class OutputMemoryBitStream
 {

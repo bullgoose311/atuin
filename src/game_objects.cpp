@@ -40,33 +40,12 @@ void RoboCat::Tick()
 
 }
 
-void RoboCat::Serialize(OutputMemoryStream& stream) const
+void RoboCat::Serialize(MemoryStream* stream)
 {
-	stream.Write(m_health);
-	stream.Write(m_meowCount);
-	stream.Write((const GameObject*)m_homeBase);
-	uint8_t nameLength = static_cast<uint8_t>(strlen(m_name));
-	stream.Write(nameLength);
-	stream.Write(m_name, nameLength);
-	stream.Write(m_miceIndices);
-	stream.Write(m_position);
-}
-
-void RoboCat::Deserialize(InputMemoryStream& stream)
-{
-	stream.Read(m_health);
-	stream.Read(m_meowCount);
-	stream.Read(m_homeBase);
-	uint8_t nameLength;
-	stream.Read(nameLength);
-	stream.Read(m_name, nameLength);
-	stream.Read(m_miceIndices);
-	stream.Read(m_position);
-}
-
-void Game_SendRoboCat(int socket, const RoboCat* roboCat)
-{
-	OutputMemoryStream stream;
-	roboCat->Serialize(stream);
-	// send(socket, stream.GetBufferPtr(), stream.GetLength(), 0);
+	stream->Serialize(m_health);
+	stream->Serialize(m_meowCount);
+	stream->Serialize(m_homeBase);
+	stream->Serialize(m_name);
+	stream->Serialize(m_miceIndices);
+	stream->Serialize(m_position);
 }

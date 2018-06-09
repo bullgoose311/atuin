@@ -1,5 +1,6 @@
 #pragma once
 
+#include "log.h"
 #include "streams.h"
 
 #include <unordered_map>
@@ -53,27 +54,33 @@ public:
 
 	virtual void Tick();
 
-	void TestChange() { m_health = 7; m_meowCount = 2; strncpy_s(m_name, "nickj", 5); m_miceIndices.push_back(3); m_miceIndices.push_back(2); m_miceIndices.push_back(9); m_position.m_x = 1; m_position.m_y = 2; m_position.m_z = 3; };
+	void Serialize(MemoryStream* stream);
 
-	void Serialize(OutputMemoryStream& stream) const;
-	void Deserialize(InputMemoryStream& stream);
+	void TestChange(GameObject* home) 
+	{ 
+		m_health = 7; 
+		m_meowCount = 2; 
+		strncpy_s(m_name, "nickj", 5); 
+		m_miceIndices.push_back(3); 
+		m_miceIndices.push_back(2);
+		m_miceIndices.push_back(9); 
+		m_position.m_x = 1; 
+		m_position.m_y = 2; 
+		m_position.m_z = 3;
+		m_homeBase = home;
+	};
+	
+	void Print()
+	{
+		Log_Info(LOG_LABEL_DEBUG, "\n---%s---\nhealth: %d\nmeows: %d\nmice: %d\nx: %f\ny: %f\nz: %f\nhome: %s\n---------------", m_name, m_health, m_meowCount, m_miceIndices.size(), m_position.m_x, m_position.m_y, m_position.m_z, m_homeBase == nullptr ? "no" : "yes");
+	}
 
-	// TODO: Make private after testing
+private:
 	uint32_t m_health;
 	uint32_t m_meowCount;
 	GameObject* m_homeBase;
 	char m_name[128];
 	std::vector<int32_t> m_miceIndices;
-
 	Vector3 m_position;
 	Quaternion m_rotation;
-
-private:
-	//uint32_t m_health;
-	//uint32_t m_meowCount;
-	//GameObject* m_homeBase;
-	//char m_name[128];
-	//std::vector<int32_t> m_miceIndices;
 };
-
-void Game_SendRoboCat(int socket, const RoboCat* roboCat);

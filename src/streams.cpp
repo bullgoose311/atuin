@@ -9,6 +9,23 @@
 
 extern LinkingContext g_linkingContext;
 
+// MemoryStream
+void MemoryStream::Serialize(char* str)
+{
+	if (GetDirection() == STREAM_DIR_INPUT)
+	{
+		uint32_t size;
+		Serialize(size);
+		Serialize(str, size);
+	}
+	else
+	{
+		uint32_t size = static_cast<uint32_t>(strlen(str));
+		Serialize(size);
+		Serialize(str, size);
+	}
+}
+
 /******************
 OutputMemoryStream
 ******************/
@@ -74,6 +91,21 @@ void OutputMemoryStream::ReallocBuffer(uint32_t newLength)
 	m_capacity = newLength;
 }
 
+void OutputMemoryStream::Serialize(void* ioData, uint32_t byteCount)
+{
+	Write(ioData, byteCount);
+}
+
+void OutputMemoryStream::Serialize(GameObject* gameObject)
+{
+	Write((const GameObject*)gameObject);
+}
+
+void OutputMemoryStream::Serialize(Vector3& v3)
+{
+	Write(v3);
+}
+
 /****************
 InputMemoryStream
 *****************/
@@ -114,6 +146,21 @@ void InputMemoryStream::Read(Vector3& outV3)
 	outV3.m_z = ConvertFromFixed(compressedZ, -2000.f, .1f);
 
 	Read(outV3.m_y);
+}
+
+void InputMemoryStream::Serialize(void* ioData, uint32_t byteCount)
+{
+	Read(ioData, byteCount);
+}
+
+void InputMemoryStream::Serialize(GameObject* gameObject)
+{
+	Read(gameObject);
+}
+
+void InputMemoryStream::Serialize(Vector3& v3)
+{
+	Read(v3);
 }
 
 /********************
