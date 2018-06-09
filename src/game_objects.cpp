@@ -10,7 +10,7 @@ void RoboCat::Tick()
 
 void RoboCat::Serialize(OutputMemoryStream& stream) const
 {
-	stream.Write(m_health);
+	stream.Write<uint32_t>(m_health);
 	stream.Write(m_meowCount);
 	//no solution for m_homeBase yet
 	stream.Write(m_name, ARRAY_COUNT(m_name));
