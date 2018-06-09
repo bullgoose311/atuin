@@ -49,6 +49,16 @@ public:
 template <typename T, size_t tSize> class ByteSwapper;
 
 template <typename T>
+class ByteSwapper<T, 1>
+{
+public:
+	T Swap(T data) const
+	{
+		return data;
+	}
+};
+
+template <typename T>
 class ByteSwapper<T, 2>
 {
 public:
@@ -85,3 +95,4 @@ template <typename T> T ByteSwap(T data)
 {
 	return ByteSwapper<T, sizeof(T)>().Swap(data);
 }
+

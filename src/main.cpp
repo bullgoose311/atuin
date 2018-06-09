@@ -13,7 +13,10 @@ void SerializationTest()
 	RoboCat roboCatSrc;
 	roboCatSrc.TestChange();
 
-	Log_Info(LOG_LABEL_DEBUG, "SRC: %d - %d - %s - %d", roboCatSrc.m_health, roboCatSrc.m_meowCount, roboCatSrc.m_name, roboCatSrc.m_miceIndices.size());
+	Log_Info(
+		LOG_LABEL_DEBUG, 
+		"SRC: %d - %d - %s - %d", 
+		roboCatSrc.m_health, roboCatSrc.m_meowCount, roboCatSrc.m_name, roboCatSrc.m_miceIndices.size());
 
 	OutputMemoryStream outputStream;
 

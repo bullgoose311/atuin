@@ -21,16 +21,22 @@ enum
 class LinkingContext
 {
 public:
-	ObjectNetworkId GetNetworkId(GameObject* gameObject);
+	ObjectNetworkId GetNetworkId(const GameObject* gameObject);
 	GameObject* GetGameObject(ObjectNetworkId networkId);
 
 private:
 	std::unordered_map<ObjectNetworkId, GameObject*> m_idToObjectMap;
-	std::unordered_map<GameObject*, ObjectNetworkId> m_objectToIdMap;
+	std::unordered_map<const GameObject*, ObjectNetworkId> m_objectToIdMap;
 };
 
 struct Vector3
 {
+	Vector3() : m_x(0), m_y(0), m_z(0) {}
+	Vector3(float x, float y, float z) : m_x(x), m_y(y), m_z(z) {}
+
+	float m_x;
+	float m_y;
+	float m_z;
 };
 
 struct Quaternion
@@ -47,7 +53,7 @@ public:
 
 	virtual void Tick();
 
-	void TestChange() { m_health = 7; m_meowCount = 2; strncpy_s(m_name, "nickj", 5); m_miceIndices.push_back(3); m_miceIndices.push_back(2); m_miceIndices.push_back(9); };
+	void TestChange() { m_health = 7; m_meowCount = 2; strncpy_s(m_name, "nickj", 5); m_miceIndices.push_back(3); m_miceIndices.push_back(2); m_miceIndices.push_back(9); m_position.m_x = 1; m_position.m_y = 2; m_position.m_z = 3; };
 
 	void Serialize(OutputMemoryStream& stream) const;
 	void Deserialize(InputMemoryStream& stream);

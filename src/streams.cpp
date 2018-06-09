@@ -2,6 +2,7 @@
 
 #include "game_objects.h"
 #include "log.h"
+#include "math_utils.h"
 
 #include <algorithm>
 #include <memory>
@@ -39,10 +40,27 @@ void OutputMemoryStream::Write(const void* data, size_t byteCount)
 	m_head = resultHead;
 }
 
-void OutputMemoryStream::Write(GameObject* gameObject)
+void OutputMemoryStream::Write(const GameObject* gameObject)
 {
 	ObjectNetworkId networkId = g_linkingContext.GetNetworkId(gameObject);
 	Write(networkId);
+}
+
+void OutputMemoryStream::Write(const Vector3& v3)
+{
+	// Game world is 4000 x 4000, centered at the origin.
+	// X/Z min/max is -2000 to 2000
+	// Client side positions only need to be accurate to within 0.1 game units
+	// Total number of possible X values = ((max-min)/precision) + 1 = ((2000--2000)/0.1) + 1 = 40001
+	// log 40001 base 2 = 15.3, so we need 16 bits to represent for X and Z components
+
+	uint32_t compressedX = ConvertToFixed(v3.m_x, -2000.f, .1f);
+	uint32_t compressedZ = ConvertToFixed(v3.m_z, -2000.f, .1f);
+	Write(&compressedX, 2);
+	Write(&compressedZ, 2);
+
+	// TODO: We can compress Y better based on how often we think the object will be in the air
+	Write(v3.m_y);
 }
 
 void OutputMemoryStream::ReallocBuffer(uint32_t newLength)
@@ -83,6 +101,19 @@ void InputMemoryStream::Read(GameObject* outGameObject)
 	ObjectNetworkId networkId;
 	Read(networkId);
 	outGameObject = g_linkingContext.GetGameObject(networkId);
+}
+
+void InputMemoryStream::Read(Vector3& outV3)
+{
+	uint16_t compressedX;
+	Read(compressedX);
+	uint16_t compressedZ;
+	Read(compressedZ);
+
+	outV3.m_x = ConvertFromFixed(compressedX, -2000.f, .1f);
+	outV3.m_z = ConvertFromFixed(compressedZ, -2000.f, .1f);
+
+	Read(outV3.m_y);
 }
 
 /********************

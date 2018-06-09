@@ -78,5 +78,8 @@
     <ClInclude Include="game_objects.h">
       <Filter>game</Filter>
     </ClInclude>
+    <ClInclude Include="math_utils.h">
+      <Filter>common</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

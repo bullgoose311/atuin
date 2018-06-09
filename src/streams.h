@@ -11,6 +11,7 @@
 #define PLATFORM_ENDIANNESS 1
 
 class GameObject;
+struct Vector3;
 
 class OutputMemoryStream
 {
@@ -22,9 +23,10 @@ public:
 	uint32_t GetLength() const { return m_head; }
 
 	void Write(const void* data, size_t byteCount);
-	void Write(GameObject* gameObject);
+	void Write(const GameObject* gameObject);
+	void Write(const Vector3& v3);
 	
-	template <typename T> void Write(T data);
+	template <typename T> void Write(const T& data);
 	template <typename T> void Write(const std::vector<T>& vector);
 
 private:
@@ -35,7 +37,7 @@ private:
 	void ReallocBuffer(uint32_t newLength);
 };
 
-template<typename T> void OutputMemoryStream::Write(T data)
+template<typename T> void OutputMemoryStream::Write(const T& data)
 {
 	static_assert(std::is_arithmetic<T>::value || std::is_enum<T>::value, "generic write only supports primitive types");
 
@@ -71,6 +73,7 @@ public:
 
 	void Read(void* outData, uint32_t byteCount);
 	void Read(GameObject* outGameObject);
+	void Read(Vector3& outV3);
 
 	template <typename T> void Read(T& data);
 	template <typename T> void Read(std::vector<T>& vector);
