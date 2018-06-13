@@ -1,13 +1,12 @@
 #include "streams.h"
 
 #include "game_objects.h"
+#include "linking_context.h"
 #include "log.h"
 #include "math_utils.h"
 
 #include <algorithm>
 #include <memory>
-
-extern LinkingContext g_linkingContext;
 
 // MemoryStream
 void MemoryStream::Serialize(char* str)
@@ -59,7 +58,7 @@ void OutputMemoryStream::Write(const void* data, size_t byteCount)
 
 void OutputMemoryStream::Write(const GameObject* gameObject)
 {
-	ObjectNetworkId networkId = g_linkingContext.GetNetworkId(gameObject);
+	ObjectNetworkId_t networkId = LinkingContext::Get().GetNetworkId(gameObject, true);
 	Write(networkId);
 }
 
@@ -130,9 +129,9 @@ void InputMemoryStream::Read(void* outData, uint32_t byteCount)
 
 void InputMemoryStream::Read(GameObject* outGameObject)
 {
-	ObjectNetworkId networkId;
+	ObjectNetworkId_t networkId;
 	Read(networkId);
-	outGameObject = g_linkingContext.GetGameObject(networkId);
+	outGameObject = LinkingContext::Get().GetGameObject(networkId);
 }
 
 void InputMemoryStream::Read(Vector3& outV3)

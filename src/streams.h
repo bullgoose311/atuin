@@ -1,9 +1,8 @@
 #pragma once
 
-#include <stdint.h>
-
 #include "sys_utils.h"
 
+#include <stdint.h>
 #include <vector>
 
 // TODO: How do we know what the stream endianness is?

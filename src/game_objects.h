@@ -1,47 +1,32 @@
 #pragma once
 
 #include "log.h"
+#include "render_utils.h"
 #include "streams.h"
 
 #include <unordered_map>
 #include <stdint.h>
 #include <vector>
 
-class GameObject
-{
+#define ENTITY_CLASS_IDENTIFICATION(code, clazz) \
+	enum { kEntityClassId = code }; \
+	virtual EntityClassId_t GetClassId() const { return kEntityClassId; } \
+	static GameObject* CreateInstance() { return new clazz(); }
 
-};
-
-typedef uint32_t ObjectNetworkId;
+typedef uint32_t ObjectNetworkId_t;
+typedef uint32_t EntityClassId_t;
+typedef GameObject* (*EntityCreationFunc)();
 
 enum
 {
 	INVALID_OBJECT_NETWORK_ID = 0
 };
 
-class LinkingContext
+class GameObject
 {
-public:
-	ObjectNetworkId GetNetworkId(const GameObject* gameObject);
-	GameObject* GetGameObject(ObjectNetworkId networkId);
-
-private:
-	std::unordered_map<ObjectNetworkId, GameObject*> m_idToObjectMap;
-	std::unordered_map<const GameObject*, ObjectNetworkId> m_objectToIdMap;
-};
-
-struct Vector3
-{
-	Vector3() : m_x(0), m_y(0), m_z(0) {}
-	Vector3(float x, float y, float z) : m_x(x), m_y(y), m_z(z) {}
-
-	float m_x;
-	float m_y;
-	float m_z;
-};
-
-struct Quaternion
-{
+	enum { kEntityClassId = 'GOBJ' };
+	virtual EntityClassId_t GetClassId() const { return kEntityClassId; }
+	static GameObject* CreateInstance() { return new GameObject(); }
 };
 
 class RoboCat : public GameObject
@@ -51,8 +36,6 @@ public:
 	{
 		m_name[0] = '\0';
 	}
-
-	virtual void Tick();
 
 	void Serialize(MemoryStream* stream);
 
@@ -75,6 +58,8 @@ public:
 		Log_Info(LOG_LABEL_DEBUG, "\n---%s---\nhealth: %d\nmeows: %d\nmice: %d\nx: %f\ny: %f\nz: %f\nhome: %s\n---------------", m_name, m_health, m_meowCount, m_miceIndices.size(), m_position.m_x, m_position.m_y, m_position.m_z, m_homeBase == nullptr ? "no" : "yes");
 	}
 
+	ENTITY_CLASS_IDENTIFICATION('RBCT', RoboCat)
+
 private:
 	uint32_t m_health;
 	uint32_t m_meowCount;
@@ -84,3 +69,5 @@ private:
 	Vector3 m_position;
 	Quaternion m_rotation;
 };
+
+void Entities_Init();
