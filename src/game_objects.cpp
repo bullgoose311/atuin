@@ -28,5 +28,5 @@ void RoboCat::Read(InputMemoryBitStream& inputStream)
 
 void Entities_Init()
 {
-	EntityRegistry::Get().RegisterCreationFunction<RoboCat>();
+	EntityFactory::Get().RegisterCreationFunction<RoboCat>();
 }

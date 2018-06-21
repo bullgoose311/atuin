@@ -14,7 +14,6 @@
 	virtual EntityClassId_t GetClassId() const { return kEntityClassId; } \
 	static GameObject* CreateInstance() { return new clazz(); }
 
-typedef uint32_t EntityNetworkId_t;
 typedef uint32_t EntityClassId_t;
 typedef GameObject* (*EntityCreationFunc)();
 
@@ -79,6 +78,30 @@ private:
 	std::vector<int32_t> m_miceIndices;
 	Vector3 m_position;
 	Quaternion m_rotation;
+};
+
+enum MouseStatusProps
+{
+	MSP_NAME		= 1 << 0,
+	MSP_LEG_CNT		= 1 << 1,
+	MSP_HEAD_CNT	= 1 << 2,
+	MSP_HEALTH		= 1 << 3,
+	MSP_MAX
+};
+
+class MouseStatus : public GameObject
+{
+public:
+	ENTITY_CLASS_IDENTIFICATION('MSTS', MouseStatus)
+
+	virtual void Write(OutputMemoryBitStream& outputStream) override;
+	virtual void Read(InputMemoryBitStream& inputStream) override;
+
+private:
+	std::string m_name;
+	uint32_t m_legCount;
+	uint32_t m_headCount;
+	uint32_t m_health;
 };
 
 void Entities_Init();

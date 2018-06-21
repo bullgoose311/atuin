@@ -5,12 +5,12 @@
 #include <cassert>
 #include <unordered_map>
 
-class EntityRegistry
+class EntityFactory
 {
 public:
-	static EntityRegistry& Get()
+	static EntityFactory& Get()
 	{
-		static EntityRegistry s_instance;
+		static EntityFactory s_instance;
 		return s_instance;
 	}
 
@@ -21,7 +21,7 @@ private:
 	std::unordered_map<EntityClassId_t, EntityCreationFunc> m_classIdToCreateFuncMap;
 };
 
-template<class T> void EntityRegistry::RegisterCreationFunction()
+template<class T> void EntityFactory::RegisterCreationFunction()
 {
 	assert(m_classIdToCreateFuncMap.find(T::kEntityClassId) == m_classIdToCreateFuncMap.end());
 

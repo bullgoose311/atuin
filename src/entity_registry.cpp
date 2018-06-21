@@ -1,8 +1,8 @@
 #include "entity_registry.h"
 
-GameObject* EntityRegistry::CreateEntity(EntityClassId_t classId)
+GameObject* EntityFactory::CreateEntity(EntityClassId_t classId)
 {
-	// TODO: Why raw pointers?  Who's in charge of entity object life time?
+	// We only know how to create the object, we do not manage it's lifetime
 	EntityCreationFunc creationFunc = m_classIdToCreateFuncMap[classId];
 	return creationFunc();
 }

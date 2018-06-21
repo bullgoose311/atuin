@@ -2,21 +2,99 @@
 
 #include "bit_streams.h"
 #include "entity_registry.h"
-#include "game_objects.h"
 #include "linking_context.h"
 #include "math_utils.h"
-#include "network_utils.h"
 
+void ReplicationHeader::Write(OutputMemoryBitStream& outputStream)
+{
+	outputStream.WriteBits(m_replicationAction, GetRequiredBits<RA_MAX>::Value);
+	outputStream.Write(m_networkId);
+	if (m_replicationAction != RA_DESTROY)
+	{
+		outputStream.Write(m_classId);
+	}
+}
+
+void ReplicationHeader::Read(InputMemoryBitStream& inputStream)
+{
+	inputStream.Read(m_replicationAction, GetRequiredBits<RA_MAX>::Value);
+	inputStream.Read(m_networkId);
+	if (m_replicationAction != RA_DESTROY)
+	{
+		inputStream.Read(m_classId);
+	}
+}
+
+/*
 void ReplicationManager::ReplicateWorldState(OutputMemoryBitStream& outputStream, const std::vector<GameObject*>& objects)
 {
-	outputStream.WriteBits(PACKET_TYPE_REP_DATA, GetRequiredBits<PACKET_TYPE_MAX>::Value);
+	outputStream.WriteBits(PT_REPLICATION_DATA, GetRequiredBits<PT_MAX>::Value);
 
 	for (GameObject* go : objects)
 	{
 		ReplicateIntoStream(outputStream, go);
 	}
 }
+*/
 
+void ReplicationManager::ReplicateEntity(ReplicationAction action, OutputMemoryBitStream& outputStream, GameObject* entity)
+{
+	EntityNetworkId_t networkId = LinkingContext::Get().GetNetworkId(entity, action == RA_CREATE);
+
+	ReplicationHeader header(action, networkId, entity->GetClassId());
+
+	header.Write(outputStream);
+
+	entity->Write(outputStream);
+}
+
+void ReplicationManager::ProcessReplicationAction(InputMemoryBitStream& inputStream)
+{
+	ReplicationHeader header;
+	header.Read(inputStream);
+
+	switch (header.m_replicationAction)
+	{
+		case RA_CREATE:
+		{
+			GameObject* entity = EntityFactory::Get().CreateEntity(header.m_classId);
+			LinkingContext::Get().AddGameObject(entity, header.m_networkId);
+			entity->Read(inputStream);
+			break;
+		}
+
+		case RA_UPDATE:
+		{
+			GameObject* entity = LinkingContext::Get().GetGameObject(header.m_networkId);
+			if (entity)
+			{
+				entity->Read(inputStream);
+			}
+			else
+			{
+				// We don't have the entity yet, still need to move past it in the stream though
+				entity = EntityFactory::Get().CreateEntity(header.m_classId);
+				entity->Read(inputStream);
+				delete entity;
+			}
+			break;
+		}
+
+		case RA_DESTROY:
+		{
+			GameObject * entity = LinkingContext::Get().GetGameObject(header.m_networkId);
+			if (entity)
+			{
+				LinkingContext::Get().RemoveGameObject(entity);
+				entity->Destroy();
+				delete entity;
+			}
+			break;
+		}
+	}
+}
+
+/*
 void ReplicationManager::ReceiveReplicatedWorldState(InputMemoryBitStream& inputStream)
 {
 	std::unordered_set<GameObject*> receivedObjects;
@@ -64,3 +142,4 @@ GameObject* ReplicationManager::ReceiveReplicatedObject(InputMemoryBitStream& in
 
 	return entity;
 }
+*/

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "game_objects.h"
+#include "network_utils.h"
 
 #include <stdint.h>
 #include <unordered_map>
