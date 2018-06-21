@@ -14,15 +14,15 @@ public:
 		return s_instance;
 	}
 
-	ObjectNetworkId_t GetNetworkId(const GameObject* gameObject, bool bCreateIfNeeded);
-	GameObject* GetGameObject(ObjectNetworkId_t networkId);
-	void AddGameObject(const GameObject* gameObject, ObjectNetworkId_t networkId);
+	EntityNetworkId_t GetNetworkId(const GameObject* gameObject, bool bCreateIfNeeded);
+	GameObject* GetGameObject(EntityNetworkId_t networkId);
+	void AddGameObject(const GameObject* gameObject, EntityNetworkId_t networkId);
 	void RemoveGameObject(const GameObject* gameObject);
 
 private:
-	ObjectNetworkId_t m_nextNetworkId;
-	std::unordered_map<ObjectNetworkId_t, GameObject*> m_idToObjectMap;
-	std::unordered_map<const GameObject*, ObjectNetworkId_t> m_objectToIdMap;
+	EntityNetworkId_t m_nextNetworkId;
+	std::unordered_map<EntityNetworkId_t, GameObject*> m_idToObjectMap;
+	std::unordered_map<const GameObject*, EntityNetworkId_t> m_objectToIdMap;
 
 	LinkingContext() : m_nextNetworkId(0) {}
 };

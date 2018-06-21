@@ -1,6 +1,6 @@
 #include "linking_context.h"
 
-ObjectNetworkId_t LinkingContext::GetNetworkId(const GameObject* gameObject, bool bCreateIfNeeded)
+EntityNetworkId_t LinkingContext::GetNetworkId(const GameObject* gameObject, bool bCreateIfNeeded)
 {
 	if (!gameObject)
 	{
@@ -14,7 +14,7 @@ ObjectNetworkId_t LinkingContext::GetNetworkId(const GameObject* gameObject, boo
 	}
 	else if (bCreateIfNeeded)
 	{
-		ObjectNetworkId_t networkId = m_nextNetworkId++;
+		EntityNetworkId_t networkId = m_nextNetworkId++;
 		AddGameObject((GameObject*)gameObject, networkId);
 		return networkId;
 	}
@@ -24,7 +24,7 @@ ObjectNetworkId_t LinkingContext::GetNetworkId(const GameObject* gameObject, boo
 	}
 }
 
-void LinkingContext::AddGameObject(const GameObject* gameObject, ObjectNetworkId_t networkId)
+void LinkingContext::AddGameObject(const GameObject* gameObject, EntityNetworkId_t networkId)
 {
 	m_idToObjectMap[networkId] = (GameObject*)gameObject;
 	m_objectToIdMap[gameObject] = networkId;
@@ -32,12 +32,12 @@ void LinkingContext::AddGameObject(const GameObject* gameObject, ObjectNetworkId
 
 void LinkingContext::RemoveGameObject(const GameObject* gameObject)
 {
-	ObjectNetworkId_t networkId = m_objectToIdMap[gameObject];
+	EntityNetworkId_t networkId = m_objectToIdMap[gameObject];
 	m_objectToIdMap.erase(gameObject);
 	m_idToObjectMap.erase(networkId);
 }
 
-GameObject* LinkingContext::GetGameObject(ObjectNetworkId_t networkId)
+GameObject* LinkingContext::GetGameObject(EntityNetworkId_t networkId)
 {
 	auto it = m_idToObjectMap.find(networkId);
 	if (it != m_idToObjectMap.end())

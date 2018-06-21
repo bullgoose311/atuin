@@ -58,7 +58,7 @@ void OutputMemoryStream::Write(const void* data, size_t byteCount)
 
 void OutputMemoryStream::Write(const GameObject* gameObject)
 {
-	ObjectNetworkId_t networkId = LinkingContext::Get().GetNetworkId(gameObject, true);
+	EntityNetworkId_t networkId = LinkingContext::Get().GetNetworkId(gameObject, true);
 	Write(networkId);
 }
 
@@ -129,7 +129,7 @@ void InputMemoryStream::Read(void* outData, uint32_t byteCount)
 
 void InputMemoryStream::Read(GameObject* outGameObject)
 {
-	ObjectNetworkId_t networkId;
+	EntityNetworkId_t networkId;
 	Read(networkId);
 	outGameObject = LinkingContext::Get().GetGameObject(networkId);
 }

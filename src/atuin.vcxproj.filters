@@ -29,6 +29,18 @@
     <ClCompile Include="game_objects.cpp">
       <Filter>game</Filter>
     </ClCompile>
+    <ClCompile Include="linking_context.cpp">
+      <Filter>game</Filter>
+    </ClCompile>
+    <ClCompile Include="entity_registry.cpp">
+      <Filter>game</Filter>
+    </ClCompile>
+    <ClCompile Include="bit_streams.cpp">
+      <Filter>streams</Filter>
+    </ClCompile>
+    <ClCompile Include="replication_manager.cpp">
+      <Filter>game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="sockets">
@@ -79,6 +91,24 @@
       <Filter>game</Filter>
     </ClInclude>
     <ClInclude Include="math_utils.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="render_utils.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="linking_context.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="entity_registry.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="bit_streams.h">
+      <Filter>streams</Filter>
+    </ClInclude>
+    <ClInclude Include="replication_manager.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="network_utils.h">
       <Filter>common</Filter>
     </ClInclude>
   </ItemGroup>

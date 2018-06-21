@@ -10,8 +10,15 @@ public:
 	OutputMemoryBitStream();
 	~OutputMemoryBitStream();
 
+	void WriteBits(uint8_t data, size_t bitCount);
 	void WriteBits(const void* data, size_t bitCount);
-	template<typename T> void Write(T data, size_t bitCount = sizeof(T) * 8);
+
+	template<typename T> void Write(T data, size_t bitCount = sizeof(T) * 8)
+	{
+		// TODO: Shouldn't write 8 bits for bool, should have a specialized function for that 
+		static_assert(std::is_arithmetic<T>::value || std::is_enum<T>::value, "generic write only supports primitive data types");
+		WriteBits(&data, bitCount);
+	}
 
 	const char* GetBufferPtr() const { return m_buffer; }
 	uint32_t GetBitLength() const { return m_bitHead; }
@@ -23,17 +30,7 @@ private:
 	uint32_t m_bitCapacity;
 
 	void ReallocBuffer(uint32_t newBitCapacity);
-	void WriteBits(uint8_t data, size_t bitCount);
 };
-
-template<typename T> void OutputMemoryBitStream::Write(T data, size_t bitCount)
-{
-	// TODO: Shouldn't write 8 bits for bool, should have a specialized function for that 
-
-	static_assert(std::is_arithmetic<T>::value || std::is_enum<T>::value, "generic write only supports primitive data types");
-
-	WriteBits(&data, bitCount);
-}
 
 class InputMemoryBitStream
 {

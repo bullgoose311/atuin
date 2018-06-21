@@ -12,6 +12,20 @@ void RoboCat::Serialize(MemoryStream* stream)
 	stream->Serialize(m_position);
 }
 
+void RoboCat::Write(OutputMemoryBitStream& outputStream)
+{
+	outputStream.Write(m_health);
+	// outputStream.Write(m_position);
+}
+
+void RoboCat::Read(InputMemoryBitStream& inputStream)
+{
+	// This may never end up getting called?
+	// What happen to bi-directional serialization so that the caller didn't need to know?
+	//inputStream.Read(m_health);
+	//inputStream.Read(m_position);
+}
+
 void Entities_Init()
 {
 	EntityRegistry::Get().RegisterCreationFunction<RoboCat>();

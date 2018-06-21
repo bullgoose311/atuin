@@ -1,5 +1,6 @@
 #pragma once
 
+#include "bit_streams.h"
 #include "log.h"
 #include "render_utils.h"
 #include "streams.h"
@@ -13,7 +14,7 @@
 	virtual EntityClassId_t GetClassId() const { return kEntityClassId; } \
 	static GameObject* CreateInstance() { return new clazz(); }
 
-typedef uint32_t ObjectNetworkId_t;
+typedef uint32_t EntityNetworkId_t;
 typedef uint32_t EntityClassId_t;
 typedef GameObject* (*EntityCreationFunc)();
 
@@ -24,9 +25,17 @@ enum
 
 class GameObject
 {
+private:
 	enum { kEntityClassId = 'GOBJ' };
+
+public:
 	virtual EntityClassId_t GetClassId() const { return kEntityClassId; }
 	static GameObject* CreateInstance() { return new GameObject(); }
+
+	virtual void Write(OutputMemoryBitStream& outputStream) { (void)outputStream; };
+	virtual void Read(InputMemoryBitStream& inputStream) { (void)inputStream; }
+
+	virtual void Destroy() {}
 };
 
 class RoboCat : public GameObject
@@ -37,7 +46,9 @@ public:
 		m_name[0] = '\0';
 	}
 
-	void Serialize(MemoryStream* stream);
+	void Serialize(MemoryStream* stream);  // TODO: Delete very soon...
+	virtual void Write(OutputMemoryBitStream& outputStream) override;
+	virtual void Read(InputMemoryBitStream& inputStream) override;
 
 	void TestChange(GameObject* home) 
 	{ 
