@@ -19,6 +19,8 @@ public:
 
 private:
 	std::unordered_map<EntityClassId_t, EntityCreationFunc> m_classIdToCreateFuncMap;
+
+	EntityFactory() {}
 };
 
 template<class T> void EntityFactory::RegisterCreationFunction()

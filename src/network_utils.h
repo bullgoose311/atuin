@@ -4,6 +4,11 @@
 
 typedef uint32_t EntityNetworkId_t;
 
+enum
+{
+	INVALID_ENTITY_NETWORK_ID = 0
+};
+
 enum PacketType
 {
 	PT_HELLO,

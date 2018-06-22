@@ -131,6 +131,7 @@
     <ClCompile Include="linking_context.cpp" />
     <ClCompile Include="log.cpp" />
     <ClCompile Include="replication_manager.cpp" />
+    <ClCompile Include="multiplayer.cpp" />
     <ClCompile Include="sockets.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="socket_address.cpp" />
@@ -151,6 +152,7 @@
     <ClInclude Include="network_utils.h" />
     <ClInclude Include="render_utils.h" />
     <ClInclude Include="replication_manager.h" />
+    <ClInclude Include="multiplayer.h" />
     <ClInclude Include="sockets.h" />
     <ClInclude Include="socket_address.h" />
     <ClInclude Include="socket_util.h" />

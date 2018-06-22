@@ -8,20 +8,26 @@
 void ReplicationHeader::Write(OutputMemoryBitStream& outputStream)
 {
 	outputStream.WriteBits(m_replicationAction, GetRequiredBits<RA_MAX>::Value);
-	outputStream.Write(m_networkId);
-	if (m_replicationAction != RA_DESTROY)
+	if (m_replicationAction != RA_RPC)
 	{
-		outputStream.Write(m_classId);
+		outputStream.Write(m_networkId);
+		if (m_replicationAction != RA_DESTROY)
+		{
+			outputStream.Write(m_classId);
+		}
 	}
 }
 
 void ReplicationHeader::Read(InputMemoryBitStream& inputStream)
 {
 	inputStream.Read(m_replicationAction, GetRequiredBits<RA_MAX>::Value);
-	inputStream.Read(m_networkId);
-	if (m_replicationAction != RA_DESTROY)
+	if (m_replicationAction != RA_RPC)
 	{
-		inputStream.Read(m_classId);
+		inputStream.Read(m_networkId);
+		if (m_replicationAction != RA_DESTROY)
+		{
+			inputStream.Read(m_classId);
+		}
 	}
 }
 
@@ -45,7 +51,9 @@ void ReplicationManager::ReplicateEntity(ReplicationAction action, OutputMemoryB
 
 	header.Write(outputStream);
 
-	entity->Write(outputStream);
+	// TODO: Where does the updated dirty state come from?  It'll need to be pased in here, so we'll need separate
+	// functions for create, update and destroy
+	entity->Write(outputStream, 0xffffffff);
 }
 
 void ReplicationManager::ProcessReplicationAction(InputMemoryBitStream& inputStream)
@@ -143,3 +151,10 @@ GameObject* ReplicationManager::ReceiveReplicatedObject(InputMemoryBitStream& in
 	return entity;
 }
 */
+
+void DebugRPC(OutputMemoryBitStream& outputStream, const std::string& debugMessage)
+{
+	ReplicationHeader header(RA_RPC);
+	header.Write(outputStream);
+	outputStream.Write(debugMessage);
+}

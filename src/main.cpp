@@ -3,6 +3,7 @@
 #include "bit_streams.h"
 #include "game_objects.h"
 #include "log.h"
+#include "multiplayer.h"
 
 #include <cassert>
 #include <memory>
@@ -56,13 +57,18 @@ void BitSerializationTest()
 int main(int argc, char** argv)
 {
 	bool ok = Sockets_Init();
+	ok = ok && Entities_Init();
+	ok = ok && Multiplayer_Init();
 
-	// ...frame the game...
+	if (ok)
+	{
+		// run game loop
+	}
 
 	SerializationTest();
 	BitSerializationTest();
 
-	ok = ok && Sockets_Shutdown();
+	Sockets_Shutdown();
 
 	return ok ? 0 : 1;
 }

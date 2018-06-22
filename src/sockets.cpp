@@ -105,15 +105,13 @@ void Sockets_Tick()
 	}
 }
 
-bool Sockets_Shutdown()
+void Sockets_Shutdown()
 {
 	bool ok = WSACleanup() != SOCKET_ERROR;
 	if (!ok)
 	{
 		Log_Error(LOG_LABEL_SOCKETS, "WSACleanup failed: %d", WSAGetLastError());
 	}
-
-	return ok;
 }
 
 void TestUDP()

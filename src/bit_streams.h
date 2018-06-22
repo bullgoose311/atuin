@@ -3,6 +3,7 @@
 #include "render_utils.h"
 
 #include <stdint.h>
+#include <string>
 
 class OutputMemoryBitStream
 {
@@ -19,6 +20,8 @@ public:
 		static_assert(std::is_arithmetic<T>::value || std::is_enum<T>::value, "generic write only supports primitive data types");
 		WriteBits(&data, bitCount);
 	}
+
+	void Write(const std::string& string);
 
 	const char* GetBufferPtr() const { return m_buffer; }
 	uint32_t GetBitLength() const { return m_bitHead; }
@@ -44,16 +47,16 @@ public:
 	void ReadBits(void* outData, uint32_t bitCount);
 	void ReadBits(uint8_t& outData, uint32_t bitCount);
 
-	template<typename T> void Read(T& data, uint32_t bitCount = sizeof(T) * 8);
+	template<typename T> void Read(T& data, uint32_t bitCount = sizeof(T) * 8)
+	{
+		static_assert(std::is_arithmetic<T>::value || std::is_enum< T >::value, "generic read only supports primitive data types");
+		ReadBits(&data, bitCount);
+	}
+
+	void Read(std::string& str);
 
 private:
 	char* m_buffer;
 	uint32_t m_head;
 	uint32_t m_capacity;
 };
-
-template<typename T> void InputMemoryBitStream::Read(T& data, uint32_t bitCount)
-{
-	static_assert(std::is_arithmetic<T>::value || std::is_enum< T >::value, "generic read only supports primitive data types");
-	ReadBits(&data, bitCount);
-}

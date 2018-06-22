@@ -41,6 +41,9 @@
     <ClCompile Include="replication_manager.cpp">
       <Filter>game</Filter>
     </ClCompile>
+    <ClCompile Include="multiplayer.cpp">
+      <Filter>multiplayer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="sockets">
@@ -57,6 +60,9 @@
     </Filter>
     <Filter Include="game">
       <UniqueIdentifier>{c803f526-2b83-4631-9230-f4a3d57c259f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="multiplayer">
+      <UniqueIdentifier>{0e7a452b-4750-4b86-a239-771473283501}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -110,6 +116,9 @@
     </ClInclude>
     <ClInclude Include="network_utils.h">
       <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="multiplayer.h">
+      <Filter>multiplayer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

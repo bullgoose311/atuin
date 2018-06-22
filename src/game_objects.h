@@ -15,12 +15,15 @@
 	static GameObject* CreateInstance() { return new clazz(); }
 
 typedef uint32_t EntityClassId_t;
-typedef GameObject* (*EntityCreationFunc)();
 
 enum
 {
-	INVALID_OBJECT_NETWORK_ID = 0
+	INVALID_ENTITY_CLASS_ID = 0
 };
+
+typedef uint32_t DirtyPropertyMask_t;
+
+typedef GameObject* (*EntityCreationFunc)();
 
 class GameObject
 {
@@ -31,7 +34,7 @@ public:
 	virtual EntityClassId_t GetClassId() const { return kEntityClassId; }
 	static GameObject* CreateInstance() { return new GameObject(); }
 
-	virtual void Write(OutputMemoryBitStream& outputStream) { (void)outputStream; };
+	virtual void Write(OutputMemoryBitStream& outputStream, DirtyPropertyMask_t dirtyMask) { (void)outputStream; };
 	virtual void Read(InputMemoryBitStream& inputStream) { (void)inputStream; }
 
 	virtual void Destroy() {}
@@ -46,7 +49,7 @@ public:
 	}
 
 	void Serialize(MemoryStream* stream);  // TODO: Delete very soon...
-	virtual void Write(OutputMemoryBitStream& outputStream) override;
+	virtual void Write(OutputMemoryBitStream& outputStream, DirtyPropertyMask_t dirtyMask) override;
 	virtual void Read(InputMemoryBitStream& inputStream) override;
 
 	void TestChange(GameObject* home) 
@@ -83,8 +86,8 @@ private:
 enum MouseStatusProps
 {
 	MSP_NAME		= 1 << 0,
-	MSP_LEG_CNT		= 1 << 1,
-	MSP_HEAD_CNT	= 1 << 2,
+	MSP_LEG_COUNT		= 1 << 1,
+	MSP_HEAD_COUNT	= 1 << 2,
 	MSP_HEALTH		= 1 << 3,
 	MSP_MAX
 };
@@ -94,7 +97,7 @@ class MouseStatus : public GameObject
 public:
 	ENTITY_CLASS_IDENTIFICATION('MSTS', MouseStatus)
 
-	virtual void Write(OutputMemoryBitStream& outputStream) override;
+	virtual void Write(OutputMemoryBitStream& outputStream, DirtyPropertyMask_t dirtyMask) override;
 	virtual void Read(InputMemoryBitStream& inputStream) override;
 
 private:
@@ -104,4 +107,4 @@ private:
 	uint32_t m_health;
 };
 
-void Entities_Init();
+bool Entities_Init();

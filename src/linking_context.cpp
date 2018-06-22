@@ -4,7 +4,7 @@ EntityNetworkId_t LinkingContext::GetNetworkId(const GameObject* gameObject, boo
 {
 	if (!gameObject)
 	{
-		return INVALID_OBJECT_NETWORK_ID;
+		return INVALID_ENTITY_NETWORK_ID;
 	}
 
 	auto it = m_objectToIdMap.find(gameObject);
@@ -20,7 +20,7 @@ EntityNetworkId_t LinkingContext::GetNetworkId(const GameObject* gameObject, boo
 	}
 	else
 	{
-		return INVALID_OBJECT_NETWORK_ID;
+		return INVALID_ENTITY_NETWORK_ID;
 	}
 }
 

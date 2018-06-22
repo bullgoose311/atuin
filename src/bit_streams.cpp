@@ -62,6 +62,16 @@ void OutputMemoryBitStream::WriteBits(const void* data, size_t bitCount)
 	}
 }
 
+void OutputMemoryBitStream::Write(const std::string& str)
+{
+	uint32_t elementCount = static_cast< uint32_t >(str.size());
+	Write(elementCount);
+	for (const char& element : str)
+	{
+		Write(element);
+	}
+}
+
 void OutputMemoryBitStream::ReallocBuffer(uint32_t newBitCapacity)
 {
 	newBitCapacity += (newBitCapacity % 8);
@@ -115,4 +125,15 @@ void InputMemoryBitStream::ReadBits(uint8_t& outData, uint32_t bitCount)
 	outData &= (~(0x00ff << bitCount));
 
 	m_head += bitCount;
+}
+
+void InputMemoryBitStream::Read(std::string& str)
+{
+	uint32_t elementCount;
+	Read(elementCount);
+	str.resize(elementCount);
+	for (auto& element : str)
+	{
+		Read(element);
+	}
 }

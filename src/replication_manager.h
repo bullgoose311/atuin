@@ -15,6 +15,8 @@ enum ReplicationAction
 	RA_CREATE,
 	RA_UPDATE,
 	RA_DESTROY,
+	RA_RPC,
+	// RA_RMI,		// TODO: This would need a network ID for the object along with a method identifier
 	RA_MAX
 };
 
@@ -23,6 +25,7 @@ class ReplicationHeader
 {
 public:
 	ReplicationHeader() {}
+	ReplicationHeader(ReplicationAction replicationAction) : ReplicationHeader(replicationAction, INVALID_ENTITY_NETWORK_ID, INVALID_ENTITY_CLASS_ID) {}
 	ReplicationHeader(ReplicationAction replicationAction, EntityNetworkId_t networkId, EntityClassId_t classId)
 		: m_replicationAction(replicationAction), m_networkId(networkId), m_classId(classId) {}
 
@@ -48,6 +51,8 @@ public:
 private:
 	std::unordered_set<GameObject*> m_replicatedEntities;
 
-	void ReplicateIntoStream(OutputMemoryBitStream& outputStream, GameObject* gameObject);
-	GameObject* ReceiveReplicatedObject(InputMemoryBitStream& inputStream);
+	//void ReplicateIntoStream(OutputMemoryBitStream& outputStream, GameObject* gameObject);
+	//GameObject* ReceiveReplicatedObject(InputMemoryBitStream& inputStream);
 };
+
+void DebugRPC(OutputMemoryBitStream& outputStream, const std::string& debugMessage);
