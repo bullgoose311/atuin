@@ -28,56 +28,53 @@ public:
 	virtual void Serialize(Vector3& v3) = 0;
 	virtual void Serialize(char* str);
 
-	template<typename T> void Serialize(T& data);
-	template<typename T> void Serialize(std::vector<T>& vector);
+	template<typename T> void Serialize(T& ioData)
+	{
+		static_assert(std::is_arithmetic<T>::value || std::is_enum<T>::value, "generic serialize only supports primitive data types");
+
+		if (STREAM_ENDIANNESS == PLATFORM_ENDIANNESS)
+		{
+			Serialize(&ioData, sizeof(ioData));
+		}
+		else
+		{
+			if (GetDirection() == STREAM_DIR_INPUT)
+			{
+				T data;
+				Serialize(&data, sizeof(T));
+				ioData = ByteSwap(data);
+			}
+			else
+			{
+				T swappedData = ByteSwap(ioData);
+				Serialize(&swappedData, sizeof(swappedData));
+			}
+		}
+	}
+
+	template<typename T> void Serialize(std::vector<T>& vector)
+	{
+		if (GetDirection() == STREAM_DIR_INPUT)
+		{
+			uint32_t size;
+			Serialize(size);
+			vector.resize(size);
+		}
+		else
+		{
+			uint32_t size = static_cast<uint32_t>(vector.size());
+			Serialize(size);
+		}
+
+		for (T& t : vector)
+		{
+			Serialize(t);
+		}
+	}
 
 private:
 	virtual StreamDirection_e GetDirection() = 0;
 };
-
-template<typename T> void MemoryStream::Serialize(T& ioData)
-{
-	static_assert(std::is_arithmetic<T>::value || std::is_enum<T>::value, "generic serialize only supports primitive data types");
-
-	if (STREAM_ENDIANNESS == PLATFORM_ENDIANNESS)
-	{
-		Serialize(&ioData, sizeof(ioData));
-	}
-	else
-	{
-		if (GetDirection() == STREAM_DIR_INPUT)
-		{
-			T data;
-			Serialize(&data, sizeof(T));
-			ioData = ByteSwap(data);
-		}
-		else
-		{
-			T swappedData = ByteSwap(ioData);
-			Serialize(&swappedData, sizeof(swappedData));
-		}
-	}
-}
-
-template<typename T> void MemoryStream::Serialize(std::vector<T>& vector)
-{
-	if (GetDirection() == STREAM_DIR_INPUT)
-	{
-		uint32_t size;
-		Serialize(size);
-		vector.resize(size);
-	}
-	else
-	{
-		uint32_t size = static_cast<uint32_t>(vector.size());
-		Serialize(size);
-	}
-
-	for (T& t : vector)
-	{
-		Serialize(t);
-	}
-}
 
 // OutputMemoryStream
 

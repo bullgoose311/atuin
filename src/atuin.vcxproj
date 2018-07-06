@@ -128,8 +128,12 @@
     <ClCompile Include="bit_streams.cpp" />
     <ClCompile Include="entity_registry.cpp" />
     <ClCompile Include="game_objects.cpp" />
+    <ClCompile Include="input.cpp" />
     <ClCompile Include="linking_context.cpp" />
     <ClCompile Include="log.cpp" />
+    <ClCompile Include="network_manager_client.cpp" />
+    <ClCompile Include="network_manager_server.cpp" />
+    <ClCompile Include="network_manager_shared.cpp" />
     <ClCompile Include="replication_manager.cpp" />
     <ClCompile Include="multiplayer.cpp" />
     <ClCompile Include="sockets.cpp" />
@@ -145,10 +149,14 @@
     <ClInclude Include="array_utils.h" />
     <ClInclude Include="bit_streams.h" />
     <ClInclude Include="entity_registry.h" />
+    <ClInclude Include="input.h" />
     <ClInclude Include="linking_context.h" />
     <ClInclude Include="log.h" />
     <ClInclude Include="game_objects.h" />
     <ClInclude Include="math_utils.h" />
+    <ClInclude Include="network_manager_shared.h" />
+    <ClInclude Include="network_manager_client.h" />
+    <ClInclude Include="network_manager_server.h" />
     <ClInclude Include="network_utils.h" />
     <ClInclude Include="render_utils.h" />
     <ClInclude Include="replication_manager.h" />
@@ -159,6 +167,7 @@
     <ClInclude Include="streams.h" />
     <ClInclude Include="sys_utils.h" />
     <ClInclude Include="tcp_socket.h" />
+    <ClInclude Include="timing_utils.h" />
     <ClInclude Include="udp_socket.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

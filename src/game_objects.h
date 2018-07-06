@@ -32,7 +32,7 @@ private:
 
 public:
 	virtual EntityClassId_t GetClassId() const { return kEntityClassId; }
-	static GameObject* CreateInstance() { return new GameObject(); }
+	static GameObject* CreateInstance() { return nullptr; }
 
 	virtual void Write(OutputMemoryBitStream& outputStream, DirtyPropertyMask_t dirtyMask) { (void)outputStream; };
 	virtual void Read(InputMemoryBitStream& inputStream) { (void)inputStream; }
@@ -100,11 +100,16 @@ public:
 	virtual void Write(OutputMemoryBitStream& outputStream, DirtyPropertyMask_t dirtyMask) override;
 	virtual void Read(InputMemoryBitStream& inputStream) override;
 
+	virtual void Test() { strncpy_s(m_name, "jay-z", 5); m_legCount = 6; m_headCount = 2; m_health = 75; }
+	virtual void Print() { Log_Info(LOG_LABEL_DEBUG, "\n---%s---\nlegs: %d\nheads: %d\nhealth: %d\n---------------", m_name, m_legCount, m_headCount, m_health); }
+
 private:
-	std::string m_name;
+	char m_name[128];
 	uint32_t m_legCount;
 	uint32_t m_headCount;
 	uint32_t m_health;
+
+	void Serialize(BitStream* stream, DirtyPropertyMask_t dirtyMask);
 };
 
 bool Entities_Init();

@@ -44,6 +44,18 @@
     <ClCompile Include="multiplayer.cpp">
       <Filter>multiplayer</Filter>
     </ClCompile>
+    <ClCompile Include="network_manager_client.cpp">
+      <Filter>multiplayer\client</Filter>
+    </ClCompile>
+    <ClCompile Include="network_manager_server.cpp">
+      <Filter>multiplayer\server</Filter>
+    </ClCompile>
+    <ClCompile Include="network_manager_shared.cpp">
+      <Filter>multiplayer\shared</Filter>
+    </ClCompile>
+    <ClCompile Include="input.cpp">
+      <Filter>game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="sockets">
@@ -63,6 +75,15 @@
     </Filter>
     <Filter Include="multiplayer">
       <UniqueIdentifier>{0e7a452b-4750-4b86-a239-771473283501}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="multiplayer\client">
+      <UniqueIdentifier>{13e4e784-c06d-4b80-833e-05a264f4b4a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="multiplayer\shared">
+      <UniqueIdentifier>{2302d55a-6303-4e1a-9b1c-965fe9cb34b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="multiplayer\server">
+      <UniqueIdentifier>{91d4bd0a-370e-4706-b418-f0702d91eb65}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -119,6 +140,21 @@
     </ClInclude>
     <ClInclude Include="multiplayer.h">
       <Filter>multiplayer</Filter>
+    </ClInclude>
+    <ClInclude Include="network_manager_client.h">
+      <Filter>multiplayer\client</Filter>
+    </ClInclude>
+    <ClInclude Include="timing_utils.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="network_manager_server.h">
+      <Filter>multiplayer\server</Filter>
+    </ClInclude>
+    <ClInclude Include="network_manager_shared.h">
+      <Filter>multiplayer\shared</Filter>
+    </ClInclude>
+    <ClInclude Include="input.h">
+      <Filter>game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

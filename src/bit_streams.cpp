@@ -72,6 +72,11 @@ void OutputMemoryBitStream::Write(const std::string& str)
 	}
 }
 
+void OutputMemoryBitStream::SerializeBits(void* ioData, size_t numBits)
+{
+	WriteBits(ioData, numBits);
+}
+
 void OutputMemoryBitStream::ReallocBuffer(uint32_t newBitCapacity)
 {
 	newBitCapacity += (newBitCapacity % 8);
@@ -90,7 +95,7 @@ InputMemoryBitStream::~InputMemoryBitStream()
 	std::free(m_buffer);
 }
 
-void InputMemoryBitStream::ReadBits(void* outData, uint32_t bitCount)
+void InputMemoryBitStream::ReadBits(void* outData, size_t bitCount)
 {
 	uint8_t* destByte = reinterpret_cast< uint8_t* >(outData);
 	//write all the bytes
@@ -107,7 +112,7 @@ void InputMemoryBitStream::ReadBits(void* outData, uint32_t bitCount)
 	}
 }
 
-void InputMemoryBitStream::ReadBits(uint8_t& outData, uint32_t bitCount)
+void InputMemoryBitStream::ReadBits(uint8_t& outData, size_t bitCount)
 {
 	uint32_t byteOffset = m_head >> 3;
 	uint32_t bitOffset = m_head & 0x7;
@@ -124,7 +129,7 @@ void InputMemoryBitStream::ReadBits(uint8_t& outData, uint32_t bitCount)
 	//don't forget a mask so that we only read the bit we wanted...
 	outData &= (~(0x00ff << bitCount));
 
-	m_head += bitCount;
+	m_head += static_cast<uint32_t>(bitCount);
 }
 
 void InputMemoryBitStream::Read(std::string& str)
@@ -136,4 +141,9 @@ void InputMemoryBitStream::Read(std::string& str)
 	{
 		Read(element);
 	}
+}
+
+void InputMemoryBitStream::SerializeBits(void* ioData, size_t numBits)
+{
+	ReadBits(ioData, numBits);
 }

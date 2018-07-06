@@ -34,24 +34,21 @@ void SerializationTest()
 
 void BitSerializationTest()
 {
-	OutputMemoryBitStream outputBitStream;
+	MouseStatus mouseStatusSrc;
+	mouseStatusSrc.Test();
+	mouseStatusSrc.Print();
 
-	int out = 0xE;			// 1110
-	int expectedIn = 0x6;	//  110
-
-	outputBitStream.Write(out, 3);
+	OutputMemoryBitStream outputStream;
+	mouseStatusSrc.Write(outputStream, 0xffffffff);
 
 	char* tempBuffer = static_cast<char*>(std::malloc(kMaxPacketSize));
-	std::memcpy(tempBuffer, outputBitStream.GetBufferPtr(), outputBitStream.GetBitLength());
+	std::memcpy(tempBuffer, outputStream.GetBufferPtr(), outputStream.GetBitLength() / 8);
 
-	InputMemoryBitStream inputBitStream(tempBuffer, outputBitStream.GetBitLength());
+	InputMemoryBitStream inputStream(tempBuffer, outputStream.GetBitLength());
 
-	int in = 0;
-	inputBitStream.Read(in, 3);
-
-	assert(expectedIn == in);
-
-	Log_Info(LOG_LABEL_DEBUG, "bit serialization test passed");
+	MouseStatus mouseStatusDst;
+	mouseStatusDst.Read(inputStream);
+	mouseStatusDst.Print();
 }
 
 int main(int argc, char** argv)
@@ -65,7 +62,7 @@ int main(int argc, char** argv)
 		// run game loop
 	}
 
-	SerializationTest();
+	//SerializationTest();
 	BitSerializationTest();
 
 	Sockets_Shutdown();

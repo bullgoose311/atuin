@@ -27,54 +27,42 @@ void RoboCat::Read(InputMemoryBitStream& inputStream)
 	//inputStream.Read(m_position);
 }
 
-void MouseStatus::Write(OutputMemoryBitStream& outputStream, DirtyPropertyMask_t dirtyMask)
+void MouseStatus::Serialize(BitStream* bitStream, DirtyPropertyMask_t dirtyMask)
 {
-	outputStream.Write(dirtyMask, GetRequiredBits<MSP_MAX>::Value);
-	
 	if ((dirtyMask & MSP_NAME) != 0)
 	{
-		outputStream.Write(m_name);
+		bitStream->Serialize(m_name);
 	}
 
 	if ((dirtyMask & MSP_LEG_COUNT) != 0)
 	{
-		outputStream.Write(m_legCount);
+		bitStream->Serialize(m_legCount);
 	}
 
 	if ((dirtyMask & MSP_HEAD_COUNT) != 0)
 	{
-		outputStream.Write(m_headCount);
+		bitStream->Serialize(m_headCount);
 	}
 
 	if ((dirtyMask & MSP_HEALTH) != 0)
 	{
-		outputStream.Write(m_health);
+		bitStream->Serialize(m_health);
 	}
+}
+
+void MouseStatus::Write(OutputMemoryBitStream& outputStream, DirtyPropertyMask_t dirtyMask)
+{
+	outputStream.Write(dirtyMask, GetRequiredBits<MSP_MAX>::Value);
+	
+	Serialize(&outputStream, dirtyMask);
 }
 
 void MouseStatus::Read(InputMemoryBitStream& inputStream)
 {
 	DirtyPropertyMask_t dirtyMask;
 	inputStream.Read(dirtyMask, GetRequiredBits<MSP_MAX>::Value);
-	if ((dirtyMask & MSP_NAME) != 0)
-	{
-		inputStream.Read(m_name);
-	}
 
-	if ((dirtyMask & MSP_LEG_COUNT) != 0)
-	{
-		inputStream.Read(m_legCount);
-	}
-
-	if ((dirtyMask & MSP_HEAD_COUNT) != 0)
-	{
-		inputStream.Read(m_headCount);
-	}
-
-	if ((dirtyMask & MSP_HEALTH) != 0)
-	{
-		inputStream.Read(m_health);
-	}
+	Serialize(&inputStream, dirtyMask);
 }
 
 bool Entities_Init()
