@@ -3,6 +3,11 @@
 #include "log.h"
 #include "network_manager_shared.h"
 
+ClientProxyPtr NetworkManagerServer::GetClientProxy(playerId_t playerId)
+{
+	return nullptr;
+}
+
 void NetworkManagerServer::ProcessPacket(InputMemoryBitStream& inputStream, const SocketAddress& fromAddr)
 {
 	SocketAddress sockAddr;
@@ -30,8 +35,9 @@ void NetworkManagerServer::HandlePacketFromNewClient(InputMemoryBitStream& input
 	std::string name;
 	inputStream.Read(name);
 
-	// TODO: Create client proxy...
-	ClientProxy clientProxy;
+	// TODO: Where do we store the client proxy?
+	playerId_t playerId = 1;
+	ClientProxy clientProxy(fromAddr, name, playerId);
 
 	SendWelcomePacket(&clientProxy);
 

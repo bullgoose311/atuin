@@ -1,4 +1,4 @@
-#include "replication_manager.h"
+#include "replication_manager_shared.h"
 
 #include "bit_streams.h"
 #include "entity_registry.h"

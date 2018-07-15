@@ -38,9 +38,6 @@
     <ClCompile Include="bit_streams.cpp">
       <Filter>streams</Filter>
     </ClCompile>
-    <ClCompile Include="replication_manager.cpp">
-      <Filter>game</Filter>
-    </ClCompile>
     <ClCompile Include="multiplayer.cpp">
       <Filter>multiplayer</Filter>
     </ClCompile>
@@ -55,6 +52,18 @@
     </ClCompile>
     <ClCompile Include="input.cpp">
       <Filter>game</Filter>
+    </ClCompile>
+    <ClCompile Include="replication_manager_shared.cpp">
+      <Filter>multiplayer\shared</Filter>
+    </ClCompile>
+    <ClCompile Include="game_objects_server.cpp">
+      <Filter>game\server</Filter>
+    </ClCompile>
+    <ClCompile Include="math_utils.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="delivery_notification_manager.cpp">
+      <Filter>multiplayer\shared</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -84,6 +93,9 @@
     </Filter>
     <Filter Include="multiplayer\server">
       <UniqueIdentifier>{91d4bd0a-370e-4706-b418-f0702d91eb65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="game\server">
+      <UniqueIdentifier>{bdee1a54-4fb7-4286-af17-2f9df7fca33c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -132,9 +144,6 @@
     <ClInclude Include="bit_streams.h">
       <Filter>streams</Filter>
     </ClInclude>
-    <ClInclude Include="replication_manager.h">
-      <Filter>game</Filter>
-    </ClInclude>
     <ClInclude Include="network_utils.h">
       <Filter>common</Filter>
     </ClInclude>
@@ -155,6 +164,18 @@
     </ClInclude>
     <ClInclude Include="input.h">
       <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="replication_manager_shared.h">
+      <Filter>multiplayer\shared</Filter>
+    </ClInclude>
+    <ClInclude Include="replication_manager_server.h">
+      <Filter>multiplayer\server</Filter>
+    </ClInclude>
+    <ClInclude Include="game_objects_server.h">
+      <Filter>game\server</Filter>
+    </ClInclude>
+    <ClInclude Include="delivery_notification_manager.h">
+      <Filter>multiplayer\shared</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

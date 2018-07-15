@@ -3,6 +3,16 @@
 #include "entity_registry.h"
 #include "math_utils.h"
 
+void RoboCat::ProcessInput(float deltaTime, const InputState& inputState)
+{
+
+}
+
+void RoboCat::SimulateMovement(float deltaTime)
+{
+
+}
+
 void RoboCat::Serialize(MemoryStream* stream)
 {
 	stream->Serialize(m_health);

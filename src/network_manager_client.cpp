@@ -91,6 +91,8 @@ void NetworkManagerClient::SendHelloPacket()
 
 void NetworkManagerClient::SendInputPacket()
 {
+	// NOTE: Currently this is not redundant, whose responsibility should that be?
+
 	MoveList& moveList = InputManager::Get().GetMoveList();
 	if (!moveList.HasMoves())
 	{
@@ -102,7 +104,7 @@ void NetworkManagerClient::SendInputPacket()
 
 	// TODO: How many moves do we want to send per packet?  Right now we're sending 3, but that's arbitrary...
 	int moveCount = static_cast<int>(moveList.GetMoveCount());
-	int startIndex = moveCount > 3 ? moveCount - 3 - 1 : 0;
+	int startIndex = moveCount > 3 ? moveCount - 3 : 0;
 	inputPacket.Write(moveCount - startIndex, 2);
 	for (int i = startIndex; i < moveCount; ++i)
 	{

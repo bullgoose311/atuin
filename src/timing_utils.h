@@ -14,6 +14,11 @@ public:
 		return 0.0f;
 	}
 
+	uint64_t GetTimeMS()
+	{
+		return 0;
+	}
+
 private:
 	Timing() {}
 };

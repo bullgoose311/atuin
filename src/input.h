@@ -2,7 +2,7 @@
 
 #include "bit_streams.h"
 
-#include <vector>
+#include <deque>
 
 class InputState
 {
@@ -44,9 +44,9 @@ public:
 	{
 	}
 
-	const InputState& GetInputState() { return m_inputState; }
-	float GetTimestamp() { return m_timestamp; }
-	float GetDeltaTime() { return m_deltaTime; }
+	const InputState& GetInputState() const { return m_inputState; }
+	float GetTimestamp() const { return m_timestamp; }
+	float GetDeltaTime() const { return m_deltaTime; }
 
 	bool Write(OutputMemoryBitStream& outputStream) const;
 	bool Read(InputMemoryBitStream& inputStream);
@@ -60,6 +60,9 @@ private:
 class MoveList
 {
 public:
+	typedef std::deque< Move >::const_iterator const_iterator;
+	typedef std::deque< Move >::const_reverse_iterator const_reverse_iterator;
+
 	MoveList()
 		: m_lastMoveTimestamp(0)
 	{}
@@ -74,8 +77,11 @@ public:
 		return m_moves[index];
 	}
 
+	const_iterator begin() const { return m_moves.begin(); }
+	const_iterator end() const { return m_moves.end(); }
+
 private:
-	std::vector<Move> m_moves;
+	std::deque<Move> m_moves;
 	float m_lastMoveTimestamp;
 };
 

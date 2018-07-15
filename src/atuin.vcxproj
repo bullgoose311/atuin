@@ -126,15 +126,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="bit_streams.cpp" />
+    <ClCompile Include="delivery_notification_manager.cpp" />
     <ClCompile Include="entity_registry.cpp" />
     <ClCompile Include="game_objects.cpp" />
+    <ClCompile Include="game_objects_server.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="linking_context.cpp" />
     <ClCompile Include="log.cpp" />
+    <ClCompile Include="math_utils.cpp" />
     <ClCompile Include="network_manager_client.cpp" />
     <ClCompile Include="network_manager_server.cpp" />
     <ClCompile Include="network_manager_shared.cpp" />
-    <ClCompile Include="replication_manager.cpp" />
+    <ClCompile Include="replication_manager_shared.cpp" />
     <ClCompile Include="multiplayer.cpp" />
     <ClCompile Include="sockets.cpp" />
     <ClCompile Include="main.cpp" />
@@ -148,7 +151,9 @@
   <ItemGroup>
     <ClInclude Include="array_utils.h" />
     <ClInclude Include="bit_streams.h" />
+    <ClInclude Include="delivery_notification_manager.h" />
     <ClInclude Include="entity_registry.h" />
+    <ClInclude Include="game_objects_server.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="linking_context.h" />
     <ClInclude Include="log.h" />
@@ -159,7 +164,8 @@
     <ClInclude Include="network_manager_server.h" />
     <ClInclude Include="network_utils.h" />
     <ClInclude Include="render_utils.h" />
-    <ClInclude Include="replication_manager.h" />
+    <ClInclude Include="replication_manager_server.h" />
+    <ClInclude Include="replication_manager_shared.h" />
     <ClInclude Include="multiplayer.h" />
     <ClInclude Include="sockets.h" />
     <ClInclude Include="socket_address.h" />

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "bit_streams.h"
+#include "input.h"
 #include "log.h"
 #include "render_utils.h"
 #include "streams.h"
@@ -34,6 +35,8 @@ public:
 	virtual EntityClassId_t GetClassId() const { return kEntityClassId; }
 	static GameObject* CreateInstance() { return nullptr; }
 
+	virtual void Tick() {}
+
 	virtual void Write(OutputMemoryBitStream& outputStream, DirtyPropertyMask_t dirtyMask) { (void)outputStream; };
 	virtual void Read(InputMemoryBitStream& inputStream) { (void)inputStream; }
 
@@ -47,6 +50,9 @@ public:
 	{
 		m_name[0] = '\0';
 	}
+
+	void ProcessInput(float deltaTime, const InputState& inputState);
+	void SimulateMovement(float deltaTime);
 
 	void Serialize(MemoryStream* stream);  // TODO: Delete very soon...
 	virtual void Write(OutputMemoryBitStream& outputStream, DirtyPropertyMask_t dirtyMask) override;
