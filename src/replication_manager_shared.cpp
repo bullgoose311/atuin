@@ -4,6 +4,120 @@
 #include "entity_registry.h"
 #include "linking_context.h"
 #include "math_utils.h"
+#include "delivery_notification_manager.h"
+
+struct ReplicationTransmission
+{
+	ReplicationTransmission(EntityNetworkId_t networkId, ReplicationAction action, DirtyPropertyMask_t dirtyState) :
+		m_networkId(networkId),
+		m_action(action),
+		m_dirtyState(dirtyState)
+	{}
+
+	EntityNetworkId_t m_networkId;
+	ReplicationAction m_action;
+	DirtyPropertyMask_t m_dirtyState;
+};
+
+class ReplicationManagerTransmissionRecord;
+typedef std::shared_ptr<ReplicationManagerTransmissionRecord> ReplicationManagerTransmissionRecordPtr;
+
+class ReplicationManagerTransmissionRecord : public DataTransmissionRecord
+{
+public:
+	ReplicationManagerTransmissionRecord(ReplicationManager* repManager) :
+		m_repManager(repManager)
+	{
+	}
+
+	virtual void HandleDeliverySuccess(DeliveryNotificationManager* dnm) const override
+	{
+		for (const ReplicationTransmission& rt : m_replications)
+		{
+			EntityNetworkId_t networkId = rt.m_networkId;
+			switch (rt.m_action)
+			{
+			case RA_CREATE:
+				m_repManager->HandleCreateAckd(networkId);
+				break;
+			case RA_DESTROY:
+				m_repManager->HandleDestroyAckd(networkId);
+				break;
+			}
+		}
+	}
+
+	virtual void HandleDeliveryFailure(DeliveryNotificationManager* dnm) const override
+	{
+		for (const ReplicationTransmission& rt : m_replications)
+		{
+			int networkId = rt.m_networkId;
+			GameObject* entity;
+			switch (rt.m_action)
+			{
+			case RA_CREATE:
+			{
+				// Re-create if not destroyed...
+				entity = LinkingContext::Get().GetGameObject(rt.m_networkId);
+				if (entity)
+				{
+					m_repManager->BatchCreate(rt.m_networkId, rt.m_dirtyState);
+				}
+			}
+			break;
+
+			case RA_UPDATE:
+			{
+				// Get the latest state of the entity and re-send it...
+				entity = LinkingContext::Get().GetGameObject(rt.m_networkId);
+				if (entity)
+				{
+					DirtyPropertyMask_t dirtyState = rt.m_dirtyState;
+					for (const auto& inFlightPacket : dnm->GetInFlightPackets())
+					{
+						ReplicationManagerTransmissionRecordPtr transmissionRecord =
+							std::static_pointer_cast<ReplicationManagerTransmissionRecord>(inFlightPacket.GetTransmissionRecord('RPLM'));
+						if (transmissionRecord)
+						{
+							for (const ReplicationTransmission& otherRT : transmissionRecord->m_replications)
+							{
+								if (otherRT.m_networkId == networkId)
+								{
+									// If there's already a packet in flight for this entity, let's make sure
+									// we're not wasting bandwidth by sending the same dirty state
+									dirtyState &= ~otherRT.m_dirtyState;
+								}
+							}
+						}
+					}
+					// If there's still any dirty state not in flight, re-batch it
+					if (dirtyState)
+					{
+						m_repManager->BatchDirty(rt.m_networkId, rt.m_dirtyState);
+					}
+				}
+			}
+			break;
+
+			case RA_DESTROY:
+			{
+				m_repManager->BatchDestroy(rt.m_networkId);
+			}
+			break;
+			}
+		}
+	}
+
+	void TrackReplication(EntityNetworkId_t networkId, ReplicationAction action, DirtyPropertyMask_t dirtyState)
+	{
+		m_replications.emplace_back(networkId, action, dirtyState);
+	}
+
+private:
+	ReplicationManager * m_repManager;
+	std::vector<ReplicationTransmission> m_replications;
+};
+typedef std::shared_ptr<ReplicationManagerTransmissionRecord> ReplicationManagerTransmissionRecordPtr;
 
 void ReplicationHeader::Write(OutputMemoryBitStream& outputStream)
 {
@@ -100,6 +214,71 @@ void ReplicationManager::ProcessReplicationAction(InputMemoryBitStream& inputStr
 			break;
 		}
 	}
+}
+
+void ReplicationManager::BatchCreate(EntityNetworkId_t networkId, DirtyPropertyMask_t initialDirtyState)
+{
+	m_entityToReplicationCommandMap[networkId] = ReplicationCommand(initialDirtyState);
+}
+
+void ReplicationManager::BatchDestroy(EntityNetworkId_t networkId)
+{
+	m_entityToReplicationCommandMap[networkId].SetDestroy();
+}
+
+void ReplicationManager::BatchDirty(EntityNetworkId_t networkId, DirtyPropertyMask_t dirtyState)
+{
+	m_entityToReplicationCommandMap[networkId].AddDirtyState(dirtyState);
+}
+
+void ReplicationManager::WriteBatchedCommands(OutputMemoryBitStream& outgoingPacket, InFlightPacket* inFlightPacket)
+{
+	ReplicationManagerTransmissionRecordPtr transmissionRecord = nullptr;
+	for (auto& pair : m_entityToReplicationCommandMap)
+	{
+		ReplicationCommand& replicationCommand = pair.second;
+		if (replicationCommand.HasDirtyState())
+		{
+			EntityNetworkId_t networkId = pair.first;
+			GameObject* entity = LinkingContext::Get().GetGameObject(networkId);
+			if (!entity)
+			{
+				continue;
+			}
+
+			ReplicationAction action = replicationCommand.GetAction();
+			ReplicationHeader header(action, networkId, entity->GetClassId());
+			header.Write(outgoingPacket);
+			DirtyPropertyMask_t dirtyState = replicationCommand.GetDirtyState();
+			if (action == RA_CREATE || action == RA_UPDATE)
+			{
+				entity->Write(outgoingPacket, dirtyState);
+			}
+			
+			// We only want to add our transmission record to the in-flight packet if 
+			// we actually have entity data to replicate
+			if (!transmissionRecord)
+			{
+				transmissionRecord = std::make_shared<ReplicationManagerTransmissionRecord>(this);
+				inFlightPacket->SetTransmissionRecord('RPLM', transmissionRecord);
+			}
+
+			transmissionRecord->TrackReplication(networkId, action, dirtyState);
+
+			// Clear dirty state so that we don't try to replicate this object again until it changes
+			replicationCommand.ClearDirtyState(dirtyState);
+		}
+	}
+}
+
+void ReplicationManager::HandleCreateAckd(EntityNetworkId_t networkId)
+{
+	// TODO: Change the replication state from "create" to "update"
+}
+
+void ReplicationManager::HandleDestroyAckd(EntityNetworkId_t networkId)
+{
+	// TODO: Stop replicating this entity
 }
 
 /*

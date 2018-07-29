@@ -13,10 +13,16 @@ class ClientProxy
 {
 public:
 	ClientProxy(const SocketAddress& socketAddress, const std::string& name, playerId_t playerId)
-		: m_address(socketAddress), m_name(name), m_playerId(playerId), m_bLastMoveTimestampDirty(false)
+		: m_address(socketAddress), m_name(name), m_playerId(playerId), m_bLastMoveTimestampDirty(false), m_lastPacketReceivedTimestamp(0)
 	{}
 
 	MoveList& GetUnprocessedMoveList() { return m_unprocessedMoveList; }
+
+	void UpdateLastPacketTimestamp();
+
+	void MarkLastMoveTimestampDirty() { m_bLastMoveTimestampDirty = true; }
+	void MarkLastMoveTimestampNotDirty() { m_bLastMoveTimestampDirty = false; }
+	bool IsLastMoveTimestampDirty() { return m_bLastMoveTimestampDirty; }
 
 private:
 	friend class NetworkManagerServer;
@@ -28,6 +34,7 @@ private:
 	playerId_t m_playerId;
 	MoveList m_unprocessedMoveList;
 	bool m_bLastMoveTimestampDirty;
+	float m_lastPacketReceivedTimestamp;
 };
 
 typedef std::shared_ptr<ClientProxy> ClientProxyPtr;
@@ -45,13 +52,17 @@ public:
 
 	void ProcessPacket(InputMemoryBitStream& inputStream, const SocketAddress& fromAddr);
 
+	void WriteLastMoveTimestampIfDirty(OutputMemoryBitStream& packet, ClientProxyPtr clientProxy);
+
 private:
 	NetworkManagerServer() {}
 
 	std::unordered_map<SocketAddress, ClientProxy*> m_clientMap;
 
 	void HandlePacketFromNewClient(InputMemoryBitStream& inputStream, const SocketAddress& fromAddr);
-	void ProcessClientPacket(const ClientProxy* clientProxy, InputMemoryBitStream& inputStream);
+	
+	void ProcessClientPacket(ClientProxy* clientProxy, InputMemoryBitStream& inputStream);
+	void HandleInputPacket(ClientProxy* clientProxy, InputMemoryBitStream& packet);
 
 	void SendWelcomePacket(const ClientProxy* clientProxy);
 };

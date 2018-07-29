@@ -29,3 +29,17 @@ const Move& MoveList::AddMove(const InputState& inputState, float timestamp)
 	m_lastMoveTimestamp = timestamp;
 	return m_moves.back();
 }
+
+bool MoveList::AddMoveIfNew(const Move& move)
+{
+	float timestamp = move.GetTimestamp();
+	if (timestamp > m_lastMoveTimestamp)
+	{
+		float deltaTime = m_lastMoveTimestamp >= 0.f ? timestamp - m_lastMoveTimestamp : 0.f;
+		m_lastMoveTimestamp = timestamp;
+		m_moves.emplace_back(move.GetInputState(), timestamp, deltaTime);
+		return true;
+	}
+
+	return false;
+}

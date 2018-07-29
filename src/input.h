@@ -68,8 +68,10 @@ public:
 	{}
 
 	const Move& AddMove(const InputState& inputState, float timestamp);
+	bool AddMoveIfNew(const Move& move);
 	bool HasMoves() { return m_moves.size() > 0; }
 	size_t GetMoveCount() { return m_moves.size(); }
+	float GetLastMoveTimestamp() { return m_lastMoveTimestamp; }
 	void Clear() { m_moves.clear(); }
 
 	const Move& operator[](int index) const

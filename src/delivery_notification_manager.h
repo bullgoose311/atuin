@@ -11,15 +11,15 @@ typedef uint16_t packetSequenceNumber_t;
 
 class DeliveryNotificationManager;
 
-typedef int deliveryNotificationHandlerKey_t;
+typedef int transmissionDataKey_t;
 
-class DeliveryNotificationHandler
+class DataTransmissionRecord
 {
 public:
 	virtual void HandleDeliverySuccess(DeliveryNotificationManager* dnm) const = 0;
 	virtual void HandleDeliveryFailure(DeliveryNotificationManager* dnm) const = 0;
 };
-typedef std::shared_ptr<DeliveryNotificationHandler> DeliveryNotificationHandlerPtr;
+typedef std::shared_ptr<DataTransmissionRecord> DeliveryNotificationHandlerPtr;
 
 class InFlightPacket
 {
@@ -29,8 +29,8 @@ public:
 	packetSequenceNumber_t GetSequenceNumber() const { return m_sequenceNumber; }
 	uint64_t GetTimeDispatched() const { return m_timeDispatched; }
 
-	void SetNotificationHandler(deliveryNotificationHandlerKey_t key, DeliveryNotificationHandlerPtr handler);
-	DeliveryNotificationHandlerPtr GetNotificationHandler(deliveryNotificationHandlerKey_t key);
+	void SetTransmissionRecord(transmissionDataKey_t key, DeliveryNotificationHandlerPtr handler);
+	DeliveryNotificationHandlerPtr GetTransmissionRecord(transmissionDataKey_t key) const;
 
 	void HandleDeliverySuccess(DeliveryNotificationManager* dnm) const;
 	void HandleDeliveryFailure(DeliveryNotificationManager* dnm) const;
@@ -42,7 +42,7 @@ private:
 	// We have to iterate over these quite a bit, so an unordered map doesn't make sense
 	// as it will result in a lot of cache misses.  Should consider using a sorted vector
 	// or if we only have a few transmission types just have a dedicated member variable for each
-	std::unordered_map<deliveryNotificationHandlerKey_t, DeliveryNotificationHandlerPtr> m_notificationHandlerMap;
+	std::unordered_map<transmissionDataKey_t, DeliveryNotificationHandlerPtr> m_notificationHandlerMap;
 };
 
 class AckRange
@@ -92,6 +92,8 @@ public:
 	void ProcessAcks(InputMemoryBitStream& packet);
 
 	void ProcessTimedOutPackets();
+
+	const std::deque<InFlightPacket> GetInFlightPackets() { return m_inFlightPackets; }
 
 private:
 	static const int kAckTimeout = 30000;

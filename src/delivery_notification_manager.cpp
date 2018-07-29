@@ -2,11 +2,11 @@
 
 #include "timing_utils.h"
 
-void DeliveryNotificationHandler::HandleDeliverySuccess(DeliveryNotificationManager* dnm) const
+void DataTransmissionRecord::HandleDeliverySuccess(DeliveryNotificationManager* dnm) const
 {
 }
 
-void DeliveryNotificationHandler::HandleDeliveryFailure(DeliveryNotificationManager* dnm) const
+void DataTransmissionRecord::HandleDeliveryFailure(DeliveryNotificationManager* dnm) const
 {
 }
 
@@ -16,12 +16,12 @@ InFlightPacket::InFlightPacket(packetSequenceNumber_t sequenceNumber) :
 {
 }
 
-void InFlightPacket::SetNotificationHandler(deliveryNotificationHandlerKey_t key, DeliveryNotificationHandlerPtr handler)
+void InFlightPacket::SetTransmissionRecord(transmissionDataKey_t key, DeliveryNotificationHandlerPtr handler)
 {
 	m_notificationHandlerMap[key] = handler;
 }
 
-DeliveryNotificationHandlerPtr InFlightPacket::GetNotificationHandler(deliveryNotificationHandlerKey_t key)
+DeliveryNotificationHandlerPtr InFlightPacket::GetTransmissionRecord(transmissionDataKey_t key) const
 {
 	auto it = m_notificationHandlerMap.find(key);
 	return it != m_notificationHandlerMap.end() ? it->second : nullptr;
